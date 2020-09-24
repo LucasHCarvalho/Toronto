@@ -1,4 +1,4 @@
 ﻿  file.c
-C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(2,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
-C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(5,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
-  JogoToronto.vcxproj -> C:\Users\Vand\Desktop\Toronto\JogoToronto\Debug\JogoToronto.exe
+C:\Toronto\Toronto\JogoToronto\file.c(2,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
+C:\Toronto\Toronto\JogoToronto\file.c(5,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
+  JogoToronto.vcxproj -> C:\Toronto\Toronto\JogoToronto\Debug\JogoToronto.exe
