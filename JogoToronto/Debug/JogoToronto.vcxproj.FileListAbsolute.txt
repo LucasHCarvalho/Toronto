@@ -1,2 +1,6 @@
 C:\Users\Vand\Desktop\Toronto\JogoToronto\Debug\JogoToronto.exe
 C:\Users\Vand\Desktop\Toronto\JogoToronto\Debug\JogoToronto.pdb
+C:\Toronto\Toronto\JogoToronto\Debug\JogoToronto.exe
+C:\Toronto\Toronto\JogoToronto\Debug\JogoToronto.pdb
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\Debug\JogoToronto.exe
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\Debug\JogoToronto.pdb

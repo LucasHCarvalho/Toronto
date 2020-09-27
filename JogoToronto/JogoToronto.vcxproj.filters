@@ -23,8 +23,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\Bitmap1.bmp">
-      <Filter>Arquivos de Origem</Filter>
-    </Image>
+    <Font Include="arial.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="objetos.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

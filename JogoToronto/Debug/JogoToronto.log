@@ -1,4 +1,8 @@
 ﻿  file.c
-C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(2,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
-C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(5,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
-  JogoToronto.vcxproj -> C:\Users\Vand\Desktop\Toronto\JogoToronto\Debug\JogoToronto.exe
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\file.c(2,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\file.c(9,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\file.c(45,98): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\file.c(45,94): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\file.c(53,97): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
+C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\file.c(53,93): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
+  JogoToronto.vcxproj -> C:\Users\Vand\Desktop\Toronto\jogoToronto GIT\JogoToronto\Debug\JogoToronto.exe
