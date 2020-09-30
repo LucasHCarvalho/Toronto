@@ -1,0 +1,100 @@
+// Menu_toronto.cpp : Este arquivo contém a função 'main'. A execução do programa começa e termina ali.
+//
+
+#include <allegro5/allegro.h>;
+#include <allegro5/allegro_native_dialog.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+#include <stdio.h>
+
+
+//funções
+void sair();
+void menu();
+
+//Variáveis Globais
+int sai = 0;
+
+ALLEGRO_BITMAP *buffer, *logo;
+ALLEGRO_FONT *f32;
+
+int main() {
+
+	//Iniciação
+	allegro_init();
+	install_keyboard();
+	set_color_depth(32);
+	set_window_title("Meu Programa");
+	set_close_button_callback(sair);
+	//install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL);
+	//set_gfx_mode(GFX_AUTODETECT_WINDOWED, 800, 600, 0, 0);
+	ALLEGRO_DISPLAY* screen = NULL;
+	const int width = 800;
+	const int height = 600;
+	screen = al_create_display(800, 600);
+
+	//Variáveis Locais
+	buffer = create_bitmap(width, height);
+	logo = load_bitmap("stickman.bmp", NULL);
+	f32 = load_font("f32.pcx", NULL, NULL);
+
+	while (!(sai || ALLEGRO_KEY_ESCAPE))
+	{
+		//textprintf_ex(buffer, font, 10, 10, 0xffffff, -1,"Teste %i", txt);
+		menu();
+	}
+
+	//al_flip_display();
+	al_destroy_display(screen);
+
+	//Finalização
+	destroy_bitmap(buffer);
+	destroy_bitmap(logo);
+	destroy_font(f32);
+	return 0;
+}
+END_OF_MAIN();
+
+void menu() {
+	int time = 0, flash = 0;
+	ALLEGRO_DISPLAY* screen = NULL;
+	const int width = 800;
+	const int height = 600;
+
+	while (!(sai || ALLEGRO_KEY_ESCAPE)) {
+		//contador
+		if (time > 50)
+		{
+			time = 0;
+		}
+		draw_sprite(buffer, logo, 0, 0);
+		if (time < 25)
+		{
+			textprintf_centre_ex(buffer, f32, width / 2, height / 1.3, 0, -1, "Play the game %i");
+			textprintf_centre_ex(buffer, f32, width / 2, height / 1.3, 0, -1, "Options %i");
+			textprintf_centre_ex(buffer, f32, width / 2, height / 1.3, 0, -1, "Credits %i");
+			draw_sprite(screen, buffer, 0, 0);
+			draw_sprite(screen, buffer, 0, 0);
+			draw_sprite(screen, buffer, 0, 0);
+			rest(100);
+			clear(buffer);
+			time++;
+		}
+	}
+}
+
+void sair() { sai = 1; }
+END_OF_FUNCTION(sair);
+
+// Executar programa: Ctrl + F5 ou Menu Depurar > Iniciar Sem Depuração
+// Depurar programa: F5 ou menu Depurar > Iniciar Depuração
+
+// Dicas para Começar: 
+//   1. Use a janela do Gerenciador de Soluções para adicionar/gerenciar arquivos
+//   2. Use a janela do Team Explorer para conectar-se ao controle do código-fonte
+//   3. Use a janela de Saída para ver mensagens de saída do build e outras mensagens
+//   4. Use a janela Lista de Erros para exibir erros
+//   5. Ir Para o Projeto > Adicionar Novo Item para criar novos arquivos de código, ou Projeto > Adicionar Item Existente para adicionar arquivos de código existentes ao projeto
+//   6. No futuro, para abrir este projeto novamente, vá para Arquivo > Abrir > Projeto e selecione o arquivo. sln

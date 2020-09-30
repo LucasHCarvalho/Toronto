@@ -15,13 +15,14 @@ int main()
 {   
     // Variáveis do jogo
 //____________________________________________________________________
-    const int largura_t = 900;
     const int altura_t = 900;
+    const int largura_t = 910;
 
     int pos_x = 100;
     int pos_y = 100;
     int contador = 0;
     int FPS = 60;
+    int flag = 0;
 
     bool fim = false;
     bool teclas[] = { false, false, false, false };
@@ -42,7 +43,7 @@ int main()
         return -1;
     }
 
-    display = al_create_display(altura_t, largura_t);
+    display = al_create_display(largura_t, altura_t);
 
     if (!display)
     {
@@ -63,6 +64,7 @@ int main()
     // Criação da fila e demais dispositivos
 //____________________________________________________________________
     fila_eventos = al_create_event_queue();
+    imagem = al_load_bitmap("sticker.bmp");
     
 
     // Registro de sources
@@ -113,25 +115,25 @@ int main()
         {
             switch (ev.keyboard.keycode)
             {
-                case ALLEGRO_KEY_UP:
-                    teclas[CIMA] = false;
-                    break;
-                case ALLEGRO_KEY_DOWN:
-                    teclas[BAIXO] = false;
-                    break;
-                case ALLEGRO_KEY_RIGHT:
-                    teclas[DIREITA] = false;
-                    break;
-                case ALLEGRO_KEY_LEFT:
-                    teclas[ESQUERDA] = false;
-                    break;
+            case ALLEGRO_KEY_UP:
+                teclas[CIMA] = false;
+                break;
+            case ALLEGRO_KEY_DOWN:
+                teclas[BAIXO] = false;
+                break;
+            case ALLEGRO_KEY_RIGHT:
+                teclas[DIREITA] = false;
+                break;
+            case ALLEGRO_KEY_LEFT:
+                teclas[ESQUERDA] = false;
+                break;
             }
 
         }
-        
+
         else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
         {
-                fim = true;
+            fim = true;
         }
 
         else if (ev.type == ALLEGRO_EVENT_TIMER)
@@ -141,12 +143,28 @@ int main()
             pos_y += teclas[BAIXO] * 10;
             pos_y -= teclas[CIMA] * 10;
         }
+        else if (pos_x >= largura_t-20)
+        {
+            pos_x = -pos_x;
+        }
+        else if (pos_x <= largura_t - 20)
+        {
+            pos_x = -pos_x;
+        }
+        else if (pos_y >= altura_t -20)
+        {
+            pos_y = -pos_y;
+        }
+        else if (pos_y <= altura_t - 20)
+        {
+            pos_y = -pos_y;
+        }
           
         // DESENHO
 //____________________________________________________________________
    
-
-        al_draw_filled_rectangle(pos_x, pos_y, pos_x + 10, pos_y + 10, al_map_rgb(255, 255, 255));
+        al_draw_bitmap(imagem, pos_x, pos_y, flag);
+        // al_draw_filled_rectangle(pos_x, pos_y, pos_x + 10, pos_y + 10, al_map_rgb(255, 255, 255));
         al_flip_display();
         al_clear_to_color(al_map_rgb(0, 0, 0));
     }
@@ -156,6 +174,7 @@ int main()
 //____________________________________________________________________
     al_destroy_display(display);
     al_destroy_event_queue(fila_eventos);
+    al_destroy_bitmap(imagem);
   
 
     return 0;
