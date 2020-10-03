@@ -173,6 +173,8 @@
     <ClInclude Include="objetos.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\sticker.bmp" />
+    <Image Include="..\stickerfull.bmp" />
     <Image Include="sticker.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

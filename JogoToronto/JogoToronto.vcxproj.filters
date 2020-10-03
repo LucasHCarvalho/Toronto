@@ -31,6 +31,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\stickerfull.bmp">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="..\sticker.bmp">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
     <Image Include="sticker.bmp">
       <Filter>Arquivos de Recurso</Filter>
     </Image>
