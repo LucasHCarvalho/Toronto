@@ -5,6 +5,8 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <stdio.h>
 #include "objetos.h";
 
@@ -16,7 +18,7 @@ int main()
     // Variáveis do jogo
 //____________________________________________________________________
     const int altura_t = 900;
-    const int largura_t = 910;
+    const int largura_t = 1010;
 
     int pos_x = 100;
     int pos_y = 100;
@@ -35,7 +37,7 @@ int main()
     int cont_frames = 0;
     int pos_x_sprite = 50;
     int pos_y_sprite = 50;
-    int vel_x_sprite = 5;
+    int vel_x_sprite = 3;
     int vel_y_sprite = 5;
 
 
@@ -51,6 +53,7 @@ int main()
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_BITMAP* imagem = NULL;
     ALLEGRO_BITMAP* imagemFull = NULL;
+    ALLEGRO_SAMPLE* somteste = NULL;
 
     // Programa
 //____________________________________________________________________
@@ -76,15 +79,21 @@ int main()
     al_install_keyboard();
     al_install_mouse();
     al_init_primitives_addon(); 
-    timer = al_create_timer(1.0 / FPS);
+    al_install_audio();
+    al_init_acodec_addon();
+    al_reserve_samples(5);
+
+    timer = al_create_timer(2.0 / FPS);
+
 
     // Criação da fila e demais dispositivos
 //____________________________________________________________________
     fila_eventos = al_create_event_queue();
     //imagem = al_load_bitmap("sticker.bmp");
-    imagemFull = al_load_bitmap("stickerfull.bmp");
+    imagemFull = al_load_bitmap("images/stickerfull.bmp");
     al_convert_mask_to_alpha(imagemFull, al_map_rgb(255, 0, 255));
     
+    somteste = al_load_sample("aiao.ogg");
 
     // Registro de sources
 //____________________________________________________________________
@@ -103,7 +112,7 @@ int main()
     {
         ALLEGRO_EVENT ev;
 
-        al_wait_for_event(fila_eventos, &ev);
+        al_wait_for_event(fila_eventos, &ev);       
 
         if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
         {
@@ -115,31 +124,22 @@ int main()
             switch (ev.keyboard.keycode)
             {
                 case ALLEGRO_KEY_UP:
-                    teclas[CIMA] = true;
+                    teclas[CIMA] = true;  
+                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_DOWN:
-                    teclas[BAIXO] = true;
+                    teclas[BAIXO] = true;        
+                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_RIGHT:
-                    teclas[DIREITA] = true;
-                    coluna_atual += 1;
-                    if (coluna_atual >= coluna_folha)
-                    {
-                        coluna_atual = 0;                        
-                    }
-                    vel_x_sprite = 5;
+                    teclas[DIREITA] = true;    
+                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_LEFT:
                     teclas[ESQUERDA] = true;
-                    coluna_atual += 1;
-                    if (coluna_atual >= coluna_folha)
-                    {
-                        coluna_atual = 0;
-                    }
-                    vel_x_sprite = -5;
+                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);               
                     break;
             }
-
         }
 
         if (ev.type == ALLEGRO_EVENT_KEY_UP)
@@ -169,8 +169,27 @@ int main()
 
         else if (ev.type == ALLEGRO_EVENT_TIMER)
         {
-            pos_x_sprite += teclas[DIREITA] * 10;
-            pos_x_sprite -= teclas[ESQUERDA] * 10;
+            if (teclas[DIREITA])
+            {
+                pos_x_sprite += teclas[DIREITA] * 10;
+                coluna_atual += 1;
+                if (coluna_atual >= coluna_folha)
+                {
+                    coluna_atual = 0;
+                }
+                vel_x_sprite = 1;
+            }
+            if (teclas[ESQUERDA])
+            {
+                pos_x_sprite -= teclas[ESQUERDA] * 10;
+                coluna_atual += 1;
+                if (coluna_atual >= coluna_folha)
+                {
+                    coluna_atual = 0;
+                }
+                vel_x_sprite = -1;
+            }
+            
             pos_y_sprite += teclas[BAIXO] * 10;
             pos_y_sprite -= teclas[CIMA] * 10;
         }
@@ -190,27 +209,7 @@ int main()
         {
             pos_y_sprite = -pos_y_sprite;
         }
-        else if (ev.type == ALLEGRO_EVENT_TIMER)
-        {
-            cont_frames++;
-            
-            if (cont_frames >= frames_sprite)
-            {
-                cont_frames = 0;
-                if (linha_atual == 2) 
-                {
-                    regiao_y_folha = linha_atual * altura_sprite;
-                }
-                regiao_x_folha = coluna_atual * largura_sprite;
-                     
-            }
-            if (pos_x_sprite + largura_sprite > largura_t - 20 || pos_x_sprite < 20)
-            {
-                vel_x_sprite = -vel_x_sprite;
-            }
-            pos_x_sprite += vel_x_sprite;
-            pos_y_sprite += vel_y_sprite;
-        }       
+
         // DESENHO
 //____________________________________________________________________
         if (vel_x_sprite > 0)
@@ -233,7 +232,7 @@ int main()
     al_destroy_display(display);
     al_destroy_event_queue(fila_eventos);
     al_destroy_bitmap(imagemFull);
-  
+    al_destroy_sample(somteste);
 
     return 0;
 }

@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="aiao.ogg" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file.c">
@@ -29,16 +30,5 @@
     <ClInclude Include="objetos.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\stickerfull.bmp">
-      <Filter>Arquivos de Recurso</Filter>
-    </Image>
-    <Image Include="..\sticker.bmp">
-      <Filter>Arquivos de Recurso</Filter>
-    </Image>
-    <Image Include="sticker.bmp">
-      <Filter>Arquivos de Recurso</Filter>
-    </Image>
   </ItemGroup>
 </Project>

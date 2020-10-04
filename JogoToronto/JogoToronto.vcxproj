@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="aiao.ogg" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -171,11 +172,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="objetos.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\sticker.bmp" />
-    <Image Include="..\stickerfull.bmp" />
-    <Image Include="sticker.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
