@@ -17,7 +17,7 @@ int main()
 {   
     // Variáveis do jogo
 //____________________________________________________________________
-    const int altura_t = 900;
+    const int altura_t = 800;
     const int largura_t = 1010;
 
     int pos_x = 100;
@@ -36,11 +36,9 @@ int main()
     int frames_sprite = 3;
     int cont_frames = 0;
     int pos_x_sprite = 50;
-    int pos_y_sprite = 50;
+    int pos_y_sprite = 145;
     int vel_x_sprite = 3;
     int vel_y_sprite = 5;
-
-
 
     bool fim = false;
     bool teclas[] = { false, false, false, false };
@@ -53,8 +51,10 @@ int main()
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_BITMAP* imagem = NULL;
     ALLEGRO_BITMAP* imagemFull = NULL;
+    ALLEGRO_BITMAP* borracha = NULL;
     ALLEGRO_SAMPLE* somdefundo = NULL;
     ALLEGRO_SAMPLE* somcorrendo = NULL;
+
     // Programa
 //____________________________________________________________________
     if (!al_init())
@@ -92,6 +92,8 @@ int main()
     //imagem = al_load_bitmap("sticker.bmp");
     imagemFull = al_load_bitmap("images/stickerfull.bmp");
     al_convert_mask_to_alpha(imagemFull, al_map_rgb(255, 0, 255));
+    borracha = al_load_bitmap("images/borracha.bmp");
+    al_convert_mask_to_alpha(borracha, al_map_rgb(255, 0, 255));
     
     somdefundo = al_load_sample("trilha_sonora.ogg");
     somcorrendo = al_load_sample("Punch_04.wav");
@@ -174,7 +176,9 @@ int main()
         {
             if (teclas[DIREITA])
             {
-                pos_x_sprite += teclas[DIREITA] * 10;
+                if (pos_x_sprite <= largura_t - 50)
+                    pos_x_sprite += teclas[DIREITA] * 10;
+
                 coluna_atual += 1;
                 if (coluna_atual >= coluna_folha)
                 {
@@ -184,7 +188,9 @@ int main()
             }
             if (teclas[ESQUERDA])
             {
-                pos_x_sprite -= teclas[ESQUERDA] * 10;
+                if (pos_x_sprite >= 0)
+                    pos_x_sprite -= teclas[ESQUERDA] * 10;
+
                 coluna_atual += 1;
                 if (coluna_atual >= coluna_folha)
                 {
@@ -192,25 +198,11 @@ int main()
                 }
                 vel_x_sprite = -1;
             }
-            
-            pos_y_sprite += teclas[BAIXO] * 10;
-            pos_y_sprite -= teclas[CIMA] * 10;
-        }
-        else if (pos_x_sprite >= largura_t-20)
-        {
-            pos_x_sprite = -pos_x_sprite;
-        }
-        else if (pos_x_sprite <= largura_t - 20)
-        {
-            pos_x_sprite = -pos_x_sprite;
-        }
-        else if (pos_y_sprite >= altura_t -20)
-        {
-            pos_y_sprite = -pos_y_sprite;
-        }
-        else if (pos_y_sprite <= altura_t - 20)
-        {
-            pos_y_sprite = -pos_y_sprite;
+            if (pos_y_sprite <= altura_t - 145)
+                pos_y_sprite += 5;
+
+            if (pos_y_sprite >= 50)
+                pos_y_sprite -= teclas[CIMA] * 30;
         }
 
         // DESENHO
@@ -223,6 +215,12 @@ int main()
         {
             al_draw_scaled_bitmap(imagemFull, regiao_x_folha + (coluna_atual * largura_sprite), regiao_y_folha, largura_sprite, altura_sprite, pos_x_sprite + largura_sprite, pos_y_sprite, -largura_sprite, altura_sprite, 0);
         }
+        al_draw_bitmap(borracha, -1, 752, flag);
+        for (int i = 101; i < 1000; i += 100)
+        {
+            al_draw_bitmap(borracha, i, 752, flag);
+        }
+        al_draw_bitmap(borracha, 1010, 752, flag);
         //al_draw_bitmap(imagemFull, pos_x, pos_y, 0);
         // al_draw_filled_rectangle(pos_x, pos_y, pos_x + 10, pos_y + 10, al_map_rgb(255, 255, 255));
         al_flip_display();
