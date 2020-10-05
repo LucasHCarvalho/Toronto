@@ -17,6 +17,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="aiao.ogg" />
+    <None Include="..\trilha_sonora.ogg" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file.c">
@@ -30,5 +31,10 @@
     <ClInclude Include="objetos.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\musica toronto\Punch_04.wav">
+      <Filter>Arquivos de Recurso</Filter>
+    </Media>
   </ItemGroup>
 </Project>

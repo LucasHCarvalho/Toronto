@@ -53,8 +53,8 @@ int main()
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_BITMAP* imagem = NULL;
     ALLEGRO_BITMAP* imagemFull = NULL;
-    ALLEGRO_SAMPLE* somteste = NULL;
-
+    ALLEGRO_SAMPLE* somdefundo = NULL;
+    ALLEGRO_SAMPLE* somcorrendo = NULL;
     // Programa
 //____________________________________________________________________
     if (!al_init())
@@ -93,7 +93,8 @@ int main()
     imagemFull = al_load_bitmap("images/stickerfull.bmp");
     al_convert_mask_to_alpha(imagemFull, al_map_rgb(255, 0, 255));
     
-    somteste = al_load_sample("aiao.ogg");
+    somdefundo = al_load_sample("trilha_sonora.ogg");
+    somcorrendo = al_load_sample("Punch_04.wav");
 
     // Registro de sources
 //____________________________________________________________________
@@ -108,11 +109,14 @@ int main()
 //____________________________________________________________________
     al_start_timer(timer);
 
+    al_play_sample(somdefundo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
+
     while (!fim)
     {
         ALLEGRO_EVENT ev;
 
-        al_wait_for_event(fila_eventos, &ev);       
+        al_wait_for_event(fila_eventos, &ev); 
+        
 
         if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
         {
@@ -120,24 +124,23 @@ int main()
             {
                 fim = true;
             }
-
             switch (ev.keyboard.keycode)
             {
                 case ALLEGRO_KEY_UP:
                     teclas[CIMA] = true;  
-                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_DOWN:
                     teclas[BAIXO] = true;        
-                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_RIGHT:
-                    teclas[DIREITA] = true;    
-                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    teclas[DIREITA] = true;   
+                    al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_LEFT:
-                    teclas[ESQUERDA] = true;
-                    al_play_sample(somteste, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);               
+                    teclas[ESQUERDA] = true;    
+                    al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
             }
         }
@@ -232,7 +235,7 @@ int main()
     al_destroy_display(display);
     al_destroy_event_queue(fila_eventos);
     al_destroy_bitmap(imagemFull);
-    al_destroy_sample(somteste);
-
+    al_destroy_sample(somdefundo);
+    al_destroy_sample(somcorrendo);
     return 0;
 }
