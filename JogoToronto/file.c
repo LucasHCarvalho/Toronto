@@ -13,12 +13,20 @@
 enum TECLAS {CIMA, BAIXO, DIREITA, ESQUERDA};
 
 
+
+
+
 int main()
 {   
     // Variáveis do jogo
 //____________________________________________________________________
-    const int altura_t = 800;
-    const int largura_t = 1010;
+    const int altura_t = 600;
+    const int largura_t = 800;
+
+    const int altura_t2 = 800;
+    const int largura_t2 = 1010;
+
+    
 
     int pos_x = 100;
     int pos_y = 100;
@@ -39,14 +47,17 @@ int main()
     int pos_y_sprite = 145;
     int vel_x_sprite = 3;
     int vel_y_sprite = 5;
+    int pulos = 1;
 
     bool fim = false;
+    bool fimmenu = false;
     bool teclas[] = { false, false, false, false };
     bool desenhar = true;
 
     // Inicialização da Allegro e do Display
 //____________________________________________________________________
     ALLEGRO_DISPLAY *display = NULL;
+    ALLEGRO_DISPLAY* display2 = NULL;
     ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
     ALLEGRO_TIMER* timer = NULL;
     ALLEGRO_BITMAP* imagem = NULL;
@@ -54,6 +65,11 @@ int main()
     ALLEGRO_BITMAP* borracha = NULL;
     ALLEGRO_SAMPLE* somdefundo = NULL;
     ALLEGRO_SAMPLE* somcorrendo = NULL;
+   // ALLEGRO_BITMAP* pointer = NULL; 
+    ALLEGRO_BITMAP* menu = NULL;
+    ALLEGRO_BITMAP* menuavancar = NULL;
+    ALLEGRO_BITMAP* menusair = NULL;
+
 
     // Programa
 //____________________________________________________________________
@@ -70,6 +86,10 @@ int main()
         al_show_native_message_box(NULL, "AVISO!", NULL, "FALHAO AO CRIAR O DISPLAY", NULL, NULL);
         return -1;
     }
+
+   
+
+    
     
     // Inicialização de Addons
 //____________________________________________________________________
@@ -94,6 +114,11 @@ int main()
     al_convert_mask_to_alpha(imagemFull, al_map_rgb(255, 0, 255));
     borracha = al_load_bitmap("images/borracha.bmp");
     al_convert_mask_to_alpha(borracha, al_map_rgb(255, 0, 255));
+    menu = al_load_bitmap("images/menu1.bmp");
+    menuavancar = al_load_bitmap("images/menu2.bmp");
+    menusair = al_load_bitmap("images/menu3.bmp");
+    //pointer = al_load_bitmap("images/pointer.png");
+
     
     somdefundo = al_load_sample("trilha_sonora.ogg");
     somcorrendo = al_load_sample("Punch_04.wav");
@@ -101,7 +126,8 @@ int main()
     // Registro de sources
 //____________________________________________________________________
     al_register_event_source(fila_eventos, al_get_keyboard_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(display));
+    //al_register_event_source(fila_eventos, al_get_display_event_source(display));
+    
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
 
@@ -118,18 +144,64 @@ int main()
         ALLEGRO_EVENT ev;
 
         al_wait_for_event(fila_eventos, &ev); 
-        
 
+        if (fimmenu != true) {
+
+            if (ev.mouse.x > 60 && ev.mouse.x < 340 &&
+                ev.mouse.y > 150 && ev.mouse.y < 220 ) {
+
+                al_draw_bitmap(menuavancar, 0, 0, flag);
+                if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+
+                    al_clear_to_color(al_map_rgb(255, 255, 255));
+                    al_destroy_display(display);
+                    display2 = al_create_display(largura_t2, altura_t2);
+                    al_register_event_source(fila_eventos, al_get_display_event_source(display2));
+                    
+
+                    fimmenu = true;
+                }
+            }
+            else if (ev.mouse.x > 60 && ev.mouse.x < 340 &&
+                     ev.mouse.y > 365 && ev.mouse.y < 435) {
+
+                al_draw_bitmap(menusair, 0, 0, flag);
+                if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+                    fim = true;
+                   
+                    return 0;
+                    
+                }
+            }
+            else {
+
+                al_draw_bitmap(menu, 0, 0, flag);
+
+            }
+
+        }
+
+        
+        //al_draw_bitmap(pointer, ALLEGRO_SINGLE_BUFFER, 0, 0, ev.mouse.x, ev.mouse.y, 13, 22);
         if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
         {
             if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
             {
                 fim = true;
+                al_destroy_event_queue(fila_eventos);
             }
             switch (ev.keyboard.keycode)
             {
                 case ALLEGRO_KEY_UP:
-                    teclas[CIMA] = true;  
+                    if (pulos < 2)
+                    {
+                        pos_y_sprite -= 100;
+                        pulos++;
+                    }
+                    if (pos_y_sprite >= 640)
+                    {
+                        pulos = 0;
+                    }
                     al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_DOWN:
@@ -176,7 +248,7 @@ int main()
         {
             if (teclas[DIREITA])
             {
-                if (pos_x_sprite <= largura_t - 50)
+                if (pos_x_sprite <= largura_t2 - 50)
                     pos_x_sprite += teclas[DIREITA] * 10;
 
                 coluna_atual += 1;
@@ -198,7 +270,7 @@ int main()
                 }
                 vel_x_sprite = -1;
             }
-            if (pos_y_sprite <= altura_t - 145)
+            if (pos_y_sprite <= altura_t2 - 145)
                 pos_y_sprite += 5;
 
             if (pos_y_sprite >= 50)
@@ -207,7 +279,7 @@ int main()
 
         // DESENHO
 //____________________________________________________________________
-        if (vel_x_sprite > 0)
+        if (vel_x_sprite > 0 )
         {
             al_draw_bitmap_region(imagemFull, regiao_x_folha + (coluna_atual * largura_sprite), regiao_y_folha, largura_sprite, altura_sprite, pos_x_sprite, pos_y_sprite, flag);
         }
@@ -231,9 +303,17 @@ int main()
     // Finalização do programa
 //____________________________________________________________________
     al_destroy_display(display);
+    al_destroy_display(display2);
     al_destroy_event_queue(fila_eventos);
     al_destroy_bitmap(imagemFull);
+    al_destroy_bitmap(menu);
+    al_destroy_bitmap(menuavancar);
+    al_destroy_bitmap(menusair);
+    //al_destroy_bitmap(pointer);
+
     al_destroy_sample(somdefundo);
     al_destroy_sample(somcorrendo);
     return 0;
 }
+
+
