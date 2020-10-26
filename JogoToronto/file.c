@@ -9,12 +9,51 @@
 #include <allegro5/allegro_acodec.h>
 #include <stdio.h>
 #include "objetos.h";
+#include <Windows.h>
 
 enum TECLAS {CIMA, BAIXO, DIREITA, ESQUERDA};
 
+/*bool Colisao(int pos_x_sprite, int pos_y_sprite, int pos_x_lapis, int pos_y_lapis, int largura_sprite, int altura_sprite)
+{
+    if (pos_x_sprite + largura_sprite < pos_x_lapis || pos_x_sprite > pos_x_lapis + largura_sprite || pos_y_sprite + altura_sprite < pos_y_lapis || pos_y_sprite > pos_y_lapis + altura_sprite)
+    {
+        return false;
+    }
+    return true;
+}*/
 
+typedef struct 
+{
+    int x;
+    int y;
+    int w;
+    int h;
 
+    ALLEGRO_BITMAP* image;
+} Tiles ;
 
+typedef struct obj
+{
+    int wx, wy, x, y, w, h;
+    ALLEGRO_BITMAP* image;
+
+} fcaindo;
+
+fcaindo projeteis[50];
+
+int gravidadeprojeteis = 1;
+int caindo = 1;
+
+void fall()
+{
+
+    for (int i = 0; i < 50; i++)
+    {
+        projeteis[i].y += gravidadeprojeteis;
+
+    }
+   
+}
 
 int main()
 {   
@@ -26,13 +65,18 @@ int main()
     const int altura_t2 = 800;
     const int largura_t2 = 1010;
 
-    
+    Tiles lapis[10];
 
+    lapis[1].x = 120;
+    lapis[1].y = 630;
+    
+    lapis[2].x = 400;
+    lapis[2].y = 630;    
+        
     int pos_x = 100;
     int pos_y = 100;
     int contador = 0;
     int FPS = 60;
-    int flag = 0;
     int largura_sprite = 42;
     int altura_sprite = 96;
     int regiao_x_folha = 0;
@@ -44,15 +88,21 @@ int main()
     int frames_sprite = 3;
     int cont_frames = 0;
     int pos_x_sprite = 50;
-    int pos_y_sprite = 145;
+    int pos_y_sprite = 645;
     int vel_x_sprite = 3;
     int vel_y_sprite = 5;
     int pulos = 1;
+    float velpulo = -17;
+    int larguralapis = 155;
+    int alturalapis = 20;
+
+    const gravidade = 1;
 
     bool fim = false;
     bool fimmenu = false;
     bool teclas[] = { false, false, false, false };
     bool desenhar = true;
+    bool pulo = false;
 
     // Inicialização da Allegro e do Display
 //____________________________________________________________________
@@ -69,6 +119,7 @@ int main()
     ALLEGRO_BITMAP* menu = NULL;
     ALLEGRO_BITMAP* menuavancar = NULL;
     ALLEGRO_BITMAP* menusair = NULL;
+    ALLEGRO_BITMAP* lapistile = NULL;
 
 
     // Programa
@@ -85,11 +136,7 @@ int main()
     {
         al_show_native_message_box(NULL, "AVISO!", NULL, "FALHAO AO CRIAR O DISPLAY", NULL, NULL);
         return -1;
-    }
-
-   
-
-    
+    }    
     
     // Inicialização de Addons
 //____________________________________________________________________
@@ -118,20 +165,40 @@ int main()
     menuavancar = al_load_bitmap("images/menu2.bmp");
     menusair = al_load_bitmap("images/menu3.bmp");
     //pointer = al_load_bitmap("images/pointer.png");
-
-    
     somdefundo = al_load_sample("trilha_sonora.ogg");
     somcorrendo = al_load_sample("Punch_04.wav");
 
+    lapistile = al_load_bitmap("images/lapistile.bmp");
+    al_convert_mask_to_alpha(lapistile, al_map_rgb(255, 0, 255));
+
+    lapis[1].image = al_load_bitmap("images/lapistile.bmp");
+    lapis[2].image = al_load_bitmap("images/lapistile.bmp");
+    al_convert_mask_to_alpha(lapis[1].image, al_map_rgb(255, 0, 255));
+    al_convert_mask_to_alpha(lapis[2].image, al_map_rgb(255, 0, 255));
+
+    for (int i = 0; i < 10; i++)
+    {
+        lapis[i].h = 20;
+        lapis[i].w = 150;
+    }
+    
     // Registro de sources
 //____________________________________________________________________
     al_register_event_source(fila_eventos, al_get_keyboard_event_source());
-    //al_register_event_source(fila_eventos, al_get_display_event_source(display));
+    al_register_event_source(fila_eventos, al_get_display_event_source(display));
     
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
 
     // Funcoes Iniciais
+
+    for (int i = 0; i < 50; i++)
+    {
+        projeteis[i].image = al_load_bitmap("F.bmp");
+        projeteis[i].y = 0;
+        projeteis[i].x = i * 30;
+        al_convert_mask_to_alpha(projeteis[i].image, al_map_rgb(255, 0, 255));
+    }
 
     // Loop Principal
 //____________________________________________________________________
@@ -143,174 +210,225 @@ int main()
     {
         ALLEGRO_EVENT ev;
 
-        al_wait_for_event(fila_eventos, &ev); 
+        al_wait_for_event(fila_eventos, &ev);
+
 
         if (fimmenu != true) {
 
             if (ev.mouse.x > 60 && ev.mouse.x < 340 &&
-                ev.mouse.y > 150 && ev.mouse.y < 220 ) {
+                ev.mouse.y > 150 && ev.mouse.y < 220) {
 
-                al_draw_bitmap(menuavancar, 0, 0, flag);
+                al_draw_bitmap(menuavancar, 0, 0, 0);
                 if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 
                     al_clear_to_color(al_map_rgb(255, 255, 255));
                     al_destroy_display(display);
                     display2 = al_create_display(largura_t2, altura_t2);
                     al_register_event_source(fila_eventos, al_get_display_event_source(display2));
-                    
+
 
                     fimmenu = true;
                 }
             }
             else if (ev.mouse.x > 60 && ev.mouse.x < 340 &&
-                     ev.mouse.y > 365 && ev.mouse.y < 435) {
+                ev.mouse.y > 365 && ev.mouse.y < 435) {
 
-                al_draw_bitmap(menusair, 0, 0, flag);
+                al_draw_bitmap(menusair, 0, 0, 0);
                 if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
                     fim = true;
-                   
+
                     return 0;
-                    
                 }
             }
             else {
 
-                al_draw_bitmap(menu, 0, 0, flag);
+                al_draw_bitmap(menu, 0, 0, 0);
 
             }
 
         }
-
-        
-        //al_draw_bitmap(pointer, ALLEGRO_SINGLE_BUFFER, 0, 0, ev.mouse.x, ev.mouse.y, 13, 22);
-        if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
+        if (fimmenu == true)
         {
-            if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+            if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
             {
-                fim = true;
-                al_destroy_event_queue(fila_eventos);
-            }
-            switch (ev.keyboard.keycode)
-            {
+                if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+                {
+                    fim = true;
+                    al_destroy_event_queue(fila_eventos);
+                }
+                switch (ev.keyboard.keycode)
+                {
                 case ALLEGRO_KEY_UP:
-                    if (pulos < 2)
-                    {
-                        pos_y_sprite -= 100;
-                        pulos++;
-                    }
-                    if (pos_y_sprite >= 640)
-                    {
-                        pulos = 0;
-                    }
+                    teclas[CIMA] = true;
                     al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_DOWN:
-                    teclas[BAIXO] = true;        
+                    teclas[BAIXO] = true;
                     al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_RIGHT:
-                    teclas[DIREITA] = true;   
+                    teclas[DIREITA] = true;
                     al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
                 case ALLEGRO_KEY_LEFT:
-                    teclas[ESQUERDA] = true;    
+                    teclas[ESQUERDA] = true;
                     al_play_sample(somcorrendo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     break;
-            }
-        }
-
-        if (ev.type == ALLEGRO_EVENT_KEY_UP)
-        {
-            switch (ev.keyboard.keycode)
-            {
-            case ALLEGRO_KEY_UP:
-                teclas[CIMA] = false;
-                break;
-            case ALLEGRO_KEY_DOWN:
-                teclas[BAIXO] = false;
-                break;
-            case ALLEGRO_KEY_RIGHT:
-                teclas[DIREITA] = false;
-                break;
-            case ALLEGRO_KEY_LEFT:
-                teclas[ESQUERDA] = false;
-                break;
-            }
-
-        }
-
-        else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
-        {
-            fim = true;
-        }
-
-        else if (ev.type == ALLEGRO_EVENT_TIMER)
-        {
-            if (teclas[DIREITA])
-            {
-                if (pos_x_sprite <= largura_t2 - 50)
-                    pos_x_sprite += teclas[DIREITA] * 10;
-
-                coluna_atual += 1;
-                if (coluna_atual >= coluna_folha)
-                {
-                    coluna_atual = 0;
                 }
-                vel_x_sprite = 1;
             }
-            if (teclas[ESQUERDA])
+
+            if (ev.type == ALLEGRO_EVENT_KEY_UP)
             {
-                if (pos_x_sprite >= 0)
-                    pos_x_sprite -= teclas[ESQUERDA] * 10;
-
-                coluna_atual += 1;
-                if (coluna_atual >= coluna_folha)
+                switch (ev.keyboard.keycode)
                 {
-                    coluna_atual = 0;
+                case ALLEGRO_KEY_UP:
+                    teclas[CIMA] = false;
+                    break;
+                case ALLEGRO_KEY_DOWN:
+                    teclas[BAIXO] = false;
+                    break;
+                case ALLEGRO_KEY_RIGHT:
+                    teclas[DIREITA] = false;
+                    break;
+                case ALLEGRO_KEY_LEFT:
+                    teclas[ESQUERDA] = false;
+                    break;
                 }
-                vel_x_sprite = -1;
+
             }
-            if (pos_y_sprite <= altura_t2 - 145)
-                pos_y_sprite += 5;
 
-            if (pos_y_sprite >= 50)
-                pos_y_sprite -= teclas[CIMA] * 30;
+            else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+            {
+                fim = true;
+            }
+
+            else if (ev.type == ALLEGRO_EVENT_TIMER)
+            {
+
+                if (pos_x_sprite + largura_sprite > lapis[1].x + 10 && pos_x_sprite < lapis[1].w + lapis[1].x && pos_y_sprite + altura_sprite > lapis[1].y + lapis[1].h)
+                {
+                    pos_y_sprite -= vel_y_sprite;
+                }
+
+                if (pos_x_sprite + largura_sprite > lapis[1].x + 10 && pos_x_sprite < lapis[1].w + lapis[1].x && pos_y_sprite + altura_sprite > lapis[1].y)
+                {
+                    pulo = true;
+                }
+                else if (pos_x_sprite + largura_sprite > lapis[2].x + 10 && pos_x_sprite < lapis[2].w + lapis[2].x && pos_y_sprite + altura_sprite > lapis[2].y)
+                {
+                    pulo = true;
+                }
+                else if (pos_y_sprite > altura_t2 - 149)
+                {
+                    pulo = true;
+                }
+                else
+                {
+                    pulo = false;
+                }
+
+                if (teclas[DIREITA])
+                {
+                    if (pos_x_sprite <= largura_t2 - 50)
+                    {
+                        pos_x_sprite += teclas[DIREITA] * 10;
+                    }
+
+                    coluna_atual += 1;
+                    if (coluna_atual >= coluna_folha)
+                    {
+                        coluna_atual = 0;
+                    }
+                    vel_x_sprite = 1;
+
+                }
+                if (teclas[ESQUERDA])
+                {
+                    if (pos_x_sprite >= 0)
+                        pos_x_sprite -= teclas[ESQUERDA] * 10;
+
+                    coluna_atual += 1;
+                    if (coluna_atual >= coluna_folha)
+                    {
+                        coluna_atual = 0;
+                    }
+                    vel_x_sprite = -1;
+                }
+                if (teclas[CIMA] && pulo)
+                {
+                    vel_y_sprite = velpulo;
+                    pulo = false;
+                    teclas[CIMA] = false;
+                }
+
+                if (!pulo)
+                {
+                    vel_y_sprite += gravidade;
+                }
+                else
+                {
+                    vel_y_sprite = 0;
+                }
+
+                pos_y_sprite += vel_y_sprite;
+            }
+
+            // DESENHO
+    //____________________________________________________________________
+            if (vel_x_sprite > 0)
+            {
+                al_draw_bitmap_region(imagemFull, regiao_x_folha + (coluna_atual * largura_sprite), regiao_y_folha, largura_sprite, altura_sprite, pos_x_sprite, pos_y_sprite, 0);
+            }
+            else
+            {
+                al_draw_scaled_bitmap(imagemFull, regiao_x_folha + (coluna_atual * largura_sprite), regiao_y_folha, largura_sprite, altura_sprite, pos_x_sprite + largura_sprite, pos_y_sprite, -largura_sprite, altura_sprite, 0);
+            }
+            al_draw_bitmap(borracha, -1, 752, 0);
+            for (int i = 101; i < 1000; i += 100)
+            {
+                al_draw_bitmap(borracha, i, 752, 0);
+            }                        
+
+            for (int i = 0; i < 50; i++)
+            {   
+                
+                al_draw_bitmap(projeteis[i].image, projeteis[i].x, projeteis[i].y, 0);
+                if (!pulo)
+                {
+                    fall();
+                }
+                else
+                {
+                    projeteis[i].y = 0;
+                }
+            }        
         }
 
-        // DESENHO
-//____________________________________________________________________
-        if (vel_x_sprite > 0 )
-        {
-            al_draw_bitmap_region(imagemFull, regiao_x_folha + (coluna_atual * largura_sprite), regiao_y_folha, largura_sprite, altura_sprite, pos_x_sprite, pos_y_sprite, flag);
+            al_draw_bitmap(lapis[1].image, lapis[1].x, lapis[1].y, 0);
+            al_draw_bitmap(lapis[2].image, lapis[2].x, lapis[2].y, 0);
+
+            al_draw_bitmap(borracha, 1010, 752, 0);
+            //al_draw_bitmap(lapistile, 310, 620, 0);
+
+            //al_draw_bitmap(imagemFull, pos_x, pos_y, 0);
+            // al_draw_filled_rectangle(pos_x, pos_y, pos_x + 10, pos_y + 10, al_map_rgb(255, 255, 255));
+            al_flip_display();
+            al_clear_to_color(al_map_rgb(255, 255, 255));
         }
-        else
-        {
-            al_draw_scaled_bitmap(imagemFull, regiao_x_folha + (coluna_atual * largura_sprite), regiao_y_folha, largura_sprite, altura_sprite, pos_x_sprite + largura_sprite, pos_y_sprite, -largura_sprite, altura_sprite, 0);
-        }
-        al_draw_bitmap(borracha, -1, 752, flag);
-        for (int i = 101; i < 1000; i += 100)
-        {
-            al_draw_bitmap(borracha, i, 752, flag);
-        }
-        al_draw_bitmap(borracha, 1010, 752, flag);
-        //al_draw_bitmap(imagemFull, pos_x, pos_y, 0);
-        // al_draw_filled_rectangle(pos_x, pos_y, pos_x + 10, pos_y + 10, al_map_rgb(255, 255, 255));
-        al_flip_display();
-        al_clear_to_color(al_map_rgb(255, 255, 255));
-    }
-     
+
      
     // Finalização do programa
 //____________________________________________________________________
-    al_destroy_display(display);
     al_destroy_display(display2);
     al_destroy_event_queue(fila_eventos);
     al_destroy_bitmap(imagemFull);
     al_destroy_bitmap(menu);
     al_destroy_bitmap(menuavancar);
     al_destroy_bitmap(menusair);
+    al_destroy_bitmap(lapis[1].image);
+    al_destroy_bitmap(lapis[2].image);
+    al_destroy_bitmap(borracha);
     //al_destroy_bitmap(pointer);
-
     al_destroy_sample(somdefundo);
     al_destroy_sample(somcorrendo);
     return 0;
