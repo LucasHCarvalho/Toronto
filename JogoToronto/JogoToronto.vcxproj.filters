@@ -28,11 +28,6 @@
     <Font Include="arial.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="objetos.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <Media Include="..\..\musica toronto\Punch_04.wav">
       <Filter>Arquivos de Recurso</Filter>
     </Media>

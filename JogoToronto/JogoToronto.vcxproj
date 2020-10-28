@@ -172,9 +172,6 @@
     <Font Include="arial.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="objetos.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Media Include="..\..\musica toronto\Punch_04.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
