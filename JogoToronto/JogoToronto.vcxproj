@@ -169,10 +169,14 @@
     <ClCompile Include="file.c" />
   </ItemGroup>
   <ItemGroup>
+    <Font Include="..\arial.ttf" />
     <Font Include="arial.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\musica toronto\Punch_04.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="images\A.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

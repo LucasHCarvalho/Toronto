@@ -26,10 +26,16 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="arial.ttf" />
+    <Font Include="..\arial.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\musica toronto\Punch_04.wav">
       <Filter>Arquivos de Recurso</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="images\A.bmp">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
   </ItemGroup>
 </Project>
