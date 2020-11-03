@@ -8,3 +8,5 @@ C:\Users\Bruno Santana\Desktop\toronto2\Toronto\JogoToronto\x64\Debug\JogoToront
 C:\Users\Bruno Santana\Desktop\toronto2\Toronto\JogoToronto\x64\Debug\JogoToronto.pdb
 C:\Users\Vand\Desktop\Toronto\JogoToronto\x64\Debug\JogoToronto.exe
 C:\Users\Vand\Desktop\Toronto\JogoToronto\x64\Debug\JogoToronto.pdb
+C:\Toronto\Toronto\JogoToronto\x64\Debug\JogoToronto.exe
+C:\Toronto\Toronto\JogoToronto\x64\Debug\JogoToronto.pdb
