@@ -1,4 +1,4 @@
-// Arquivos para inicialização da biblioteca Allegro
+//  Arquivos para inicialização da biblioteca Allegro
 #include <allegro5/allegro.h>;
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_image.h>
@@ -14,8 +14,8 @@
 
 enum TECLAS {CIMA, BAIXO, DIREITA, ESQUERDA};
 
-const int altura_t = 600;
-const int largura_t = 800;
+const int altura_t = 653;
+const int largura_t = 1162;
 
 const int altura_t2 = 800;
 const int largura_t2 = 1010;
@@ -177,7 +177,7 @@ void colisaoProjeteis(Projeteis f[], Personagem *sticker, int tamanho)
     }
 }
 
-void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menusair, ALLEGRO_BITMAP *menuavancar, ALLEGRO_DISPLAY *display, 
+void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menuinstrucao, ALLEGRO_BITMAP *menusair, ALLEGRO_BITMAP *menuavancar, ALLEGRO_DISPLAY *display, 
     ALLEGRO_DISPLAY *display2, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_EVENT ev, bool *fim, bool *fimmenu)
 {
     al_draw_bitmap(menu, 0, 0, 0);
@@ -189,25 +189,36 @@ void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menusair, ALLEGRO_BITMAP *m
 
         *fim = true;
     }
-    // detecta posicao do mouse nos logos do menu para iniciar e destroir o menu ou encerrar o programa
-    if (ev.mouse.x > 60 && ev.mouse.x < 340 && ev.mouse.y > 150 && ev.mouse.y < 220)
-    {
-        al_draw_bitmap(menuavancar, 0, 0, 0);
-        if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) 
+   
+        // detecta posicao do mouse nos logos do menu para iniciar e destroir o menu ou encerrar o programa
+        if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 294 && ev.mouse.y < 355)
         {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-            al_destroy_display(display);
-            display2 = al_create_display(largura_t2, altura_t2);
-            al_register_event_source(fila_eventos, al_get_display_event_source(display2));
-            *fimmenu = true;
+            al_draw_bitmap(menuavancar, 0, 0, 0);
+            if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+            {
+                al_clear_to_color(al_map_rgb(255, 255, 255));
+                al_destroy_display(display);
+                display2 = al_create_display(largura_t2, altura_t2);
+                al_register_event_source(fila_eventos, al_get_display_event_source(display2));
+                *fimmenu = true;
+            }
         }
-    }
-    else if (ev.mouse.x > 60 && ev.mouse.x < 340 && ev.mouse.y > 365 && ev.mouse.y < 435)
-    {
-        al_draw_bitmap(menusair, 0, 0, 0);
-        if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) 
-            *fim = true;
-    }
+        else if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 407 && ev.mouse.y < 467)
+        {
+            al_draw_bitmap(menuinstrucao, 0, 0, 0);
+            if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+                *fimmenu = true;
+            }
+        }
+        else if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 520 && ev.mouse.y < 576)
+        {
+            al_draw_bitmap(menusair, 0, 0, 0);
+            if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+                *fim = true;
+        }
+
+    
+  
 }
 
 void gameover(ALLEGRO_BITMAP* vidas[], Personagem* sticker, bool *gameOver)
@@ -260,6 +271,7 @@ int main()
     ALLEGRO_BITMAP* menu = NULL;
     ALLEGRO_BITMAP* menuavancar = NULL;
     ALLEGRO_BITMAP* menusair = NULL;
+    ALLEGRO_BITMAP* menuinstrucao = NULL;
     ALLEGRO_FONT* font = NULL;
     ALLEGRO_BITMAP* vidas[4];
 
@@ -308,9 +320,10 @@ int main()
     al_convert_mask_to_alpha(imagemFull, al_map_rgb(255, 0, 255));
     borracha = al_load_bitmap("images/borracha.bmp");
     al_convert_mask_to_alpha(borracha, al_map_rgb(255, 0, 255));
-    menu = al_load_bitmap("images/menu1.bmp");
-    menuavancar = al_load_bitmap("images/menu2.bmp");
-    menusair = al_load_bitmap("images/menu3.bmp");
+    menu = al_load_bitmap("images/stickeredia_menu.bmp");
+    menuavancar = al_load_bitmap("images/stickeredia_jogar.bmp");
+    menusair = al_load_bitmap("images/stickeredia_sair.bmp");
+    menuinstrucao = al_load_bitmap("images/stickeredia_instrucoes.bmp");
     somdefundo = al_load_sample("trilha_sonora.ogg");
     somcorrendo = al_load_sample("Punch_04.wav");
 
@@ -358,7 +371,7 @@ int main()
         al_wait_for_event(fila_eventos, &ev);
 
         if (fimmenu == false)
-        criarMenu(menu, menusair, menuavancar, display, display2, fila_eventos, ev, &fim, &fimmenu);
+        criarMenu(menu, menuinstrucao, menusair, menuavancar, display, display2, fila_eventos, ev, &fim, &fimmenu);
         
         if (fimmenu == true)
         {
