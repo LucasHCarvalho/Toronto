@@ -177,19 +177,20 @@ void colisaoProjeteis(Projeteis f[], Personagem *sticker, int tamanho)
     }
 }
 
-void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menuinstrucao, ALLEGRO_BITMAP *menusair, ALLEGRO_BITMAP *menuavancar, ALLEGRO_DISPLAY *display, 
-    ALLEGRO_DISPLAY *display2, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_EVENT ev, bool *fim, bool *fimmenu)
+void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menuinstrucao, ALLEGRO_BITMAP* instrucao, ALLEGRO_BITMAP* instrucao2, ALLEGRO_BITMAP *menusair, ALLEGRO_BITMAP *menuavancar, ALLEGRO_DISPLAY *display,
+    ALLEGRO_DISPLAY *display2, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_EVENT ev, bool *fim, bool *fimmenu, bool *fiminstrucao)
 {
+
     al_draw_bitmap(menu, 0, 0, 0);
 
     // fecha o programa quando a tecla ESC for acionada
     if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE) 
     {
-
-
         *fim = true;
     }
-   
+
+    if (*fiminstrucao == false)
+    {
         // detecta posicao do mouse nos logos do menu para iniciar e destroir o menu ou encerrar o programa
         if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 294 && ev.mouse.y < 355)
         {
@@ -206,8 +207,9 @@ void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menuinstrucao, ALLEGRO_BITM
         else if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 407 && ev.mouse.y < 467)
         {
             al_draw_bitmap(menuinstrucao, 0, 0, 0);
-            if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                *fimmenu = true;
+            if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+            {
+                *fiminstrucao = true;
             }
         }
         else if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 520 && ev.mouse.y < 576)
@@ -216,19 +218,45 @@ void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menuinstrucao, ALLEGRO_BITM
             if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
                 *fim = true;
         }
-
-    
-  
+    }
+    else
+    {
+        al_clear_to_color(al_map_rgb(255, 255, 255));
+        al_draw_bitmap(instrucao, 0, 0, 0);
+        if (ev.mouse.x > 407 && ev.mouse.x < 612 && ev.mouse.y > 583 && ev.mouse.y < 632)
+        {
+            al_draw_bitmap(instrucao2, 0, 0, 0);
+            if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+            {
+                al_clear_to_color(al_map_rgb(255, 255, 255));
+                al_destroy_display(display);
+                display2 = al_create_display(largura_t2, altura_t2);
+                al_register_event_source(fila_eventos, al_get_display_event_source(display2));
+                *fimmenu = true;
+            }
+        }
+    }
 }
 
 void gameover(ALLEGRO_BITMAP* vidas[], Personagem* sticker, bool *gameOver)
 {
     for (int i = 4; i > 0; i--)
+    {
         if (sticker->vidas == i)
+        {
             al_draw_bitmap(vidas[--i], 0, 50, 0);
+        }
+    }
 
     if (sticker->vidas == 0)
+    {
         *gameOver = true;
+    }
+
+    if (sticker->score >= 15)
+    {
+        *gameOver = true;
+    }
 }
 
 int main()
@@ -253,6 +281,7 @@ int main()
 
     bool *fim = false;
     bool *fimmenu = false;
+    bool *fiminstrucao = false;
     bool teclas[] = { false, false, false, false };
     bool pulo = false;
     bool gameOver = false;
@@ -274,6 +303,9 @@ int main()
     ALLEGRO_BITMAP* menuinstrucao = NULL;
     ALLEGRO_FONT* font = NULL;
     ALLEGRO_BITMAP* vidas[4];
+    ALLEGRO_BITMAP* saladeaula;
+    ALLEGRO_BITMAP* instrucao;
+    ALLEGRO_BITMAP* instrucao2;
 
     // Programa
 //____________________________________________________________________
@@ -326,6 +358,8 @@ int main()
     menuinstrucao = al_load_bitmap("images/stickeredia_instrucoes.bmp");
     somdefundo = al_load_sample("trilha_sonora.ogg");
     somcorrendo = al_load_sample("Punch_04.wav");
+    instrucao = al_load_bitmap("images/instrucoes_stick.bmp");
+    instrucao2 = al_load_bitmap("images/instrucoes_stick2.bmp");
 
     sticker.image = al_load_bitmap("images/stickerfull.bmp"); 
     vidas[3] = al_load_bitmap("images/barravida4.bmp");
@@ -345,7 +379,8 @@ int main()
 
     a.image = al_load_bitmap("images/A.bmp");
     al_convert_mask_to_alpha(a.image, al_map_rgb(255, 0, 255));
-    
+    saladeaula = al_load_bitmap("images/saladeaula.bmp");
+    al_convert_mask_to_alpha(saladeaula, al_map_rgb(255, 0, 255));
 
     // Registro de sources
 //____________________________________________________________________
@@ -367,14 +402,16 @@ int main()
     {
         ALLEGRO_EVENT ev;
 
-
         al_wait_for_event(fila_eventos, &ev);
 
         if (fimmenu == false)
-        criarMenu(menu, menuinstrucao, menusair, menuavancar, display, display2, fila_eventos, ev, &fim, &fimmenu);
-        
+        {
+            criarMenu(menu, menuinstrucao, instrucao, instrucao2, menusair, menuavancar, display, display2, fila_eventos, ev, &fim, &fimmenu, &fiminstrucao);
+        }
+
         if (fimmenu == true)
         {
+            al_draw_bitmap(saladeaula, 0, 0, 0);
 
             if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
             {
@@ -530,7 +567,6 @@ int main()
 
         al_flip_display();
         al_clear_to_color(al_map_rgb(255, 255, 255));
-
     }
 
      
@@ -541,14 +577,15 @@ int main()
     al_destroy_bitmap(sticker.image);
     al_destroy_bitmap(f->image);
     al_destroy_bitmap(a.image);
-
-    for (int i = 0; i < 4; i ++)
+    for (int i = 0; i < 4; i++)
+    {
         al_destroy_bitmap(vidas[i]);
-
-
+    }
+    al_destroy_bitmap(saladeaula);
     al_destroy_bitmap(borracha);
     al_destroy_sample(somdefundo);
     al_destroy_sample(somcorrendo);
     al_destroy_font(font);
+
     return 0;
 }
