@@ -12,6 +12,7 @@
 #include <time.h>
 #include <stdlib.h>
 
+bool teclas[] = { false, false, false, false };
 enum TECLAS {CIMA, BAIXO, DIREITA, ESQUERDA};
 
 const int altura_t = 653;
@@ -259,6 +260,61 @@ void gameover(ALLEGRO_BITMAP* vidas[], Personagem* sticker, bool *gameOver)
     }
 }
 
+void movimentacao(ALLEGRO_EVENT ev)
+{
+    if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
+    {
+        switch (ev.keyboard.keycode)
+        {
+        case ALLEGRO_KEY_UP:
+            teclas[CIMA] = true;
+            break;
+        case ALLEGRO_KEY_DOWN:
+            teclas[BAIXO] = true;
+            break;
+        case ALLEGRO_KEY_RIGHT:
+            teclas[DIREITA] = true;
+            break;
+        case ALLEGRO_KEY_LEFT:
+            teclas[ESQUERDA] = true;
+            break;
+        }
+    }
+
+    if (ev.type == ALLEGRO_EVENT_KEY_UP)
+    {
+        switch (ev.keyboard.keycode)
+        {
+        case ALLEGRO_KEY_UP:
+            teclas[CIMA] = false;
+            break;
+        case ALLEGRO_KEY_DOWN:
+            teclas[BAIXO] = false;
+            break;
+        case ALLEGRO_KEY_RIGHT:
+            teclas[DIREITA] = false;
+            break;
+        case ALLEGRO_KEY_LEFT:
+            teclas[ESQUERDA] = false;
+            break;
+        }
+
+    }
+
+}
+
+void fase01(ALLEGRO_EVENT ev)
+{
+    ALLEGRO_BITMAP* saladeaula;
+
+    saladeaula = al_load_bitmap("images/saladeaula.bmp");
+    al_convert_mask_to_alpha(saladeaula, al_map_rgb(255, 0, 255));
+
+    al_draw_bitmap(saladeaula, 0, 0, 0);
+
+
+}
+
 int main()
 {   
     // Variáveis do jogo
@@ -282,7 +338,6 @@ int main()
     bool *fim = false;
     bool *fimmenu = false;
     bool *fiminstrucao = false;
-    bool teclas[] = { false, false, false, false };
     bool pulo = false;
     bool gameOver = false;
 
@@ -303,7 +358,6 @@ int main()
     ALLEGRO_BITMAP* menuinstrucao = NULL;
     ALLEGRO_FONT* font = NULL;
     ALLEGRO_BITMAP* vidas[4];
-    ALLEGRO_BITMAP* saladeaula;
     ALLEGRO_BITMAP* instrucao;
     ALLEGRO_BITMAP* instrucao2;
 
@@ -379,8 +433,6 @@ int main()
 
     a.image = al_load_bitmap("images/A.bmp");
     al_convert_mask_to_alpha(a.image, al_map_rgb(255, 0, 255));
-    saladeaula = al_load_bitmap("images/saladeaula.bmp");
-    al_convert_mask_to_alpha(saladeaula, al_map_rgb(255, 0, 255));
 
     // Registro de sources
 //____________________________________________________________________
@@ -404,63 +456,20 @@ int main()
 
         al_wait_for_event(fila_eventos, &ev);
 
-        if (fimmenu == false)
+        if (!fimmenu)
         {
             criarMenu(menu, menuinstrucao, instrucao, instrucao2, menusair, menuavancar, display, display2, fila_eventos, ev, &fim, &fimmenu, &fiminstrucao);
         }
-
-        if (fimmenu == true)
+        else
         {
-            al_draw_bitmap(saladeaula, 0, 0, 0);
-
-            if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
+            if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
             {
-                if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-                {
-                    fim = true;
-                }
-                switch (ev.keyboard.keycode)
-                {
-                case ALLEGRO_KEY_UP:
-                    teclas[CIMA] = true;                    
-                    break;
-                case ALLEGRO_KEY_DOWN:
-                    teclas[BAIXO] = true;
-                    break;
-                case ALLEGRO_KEY_RIGHT:
-                    teclas[DIREITA] = true;
-                    break;
-                case ALLEGRO_KEY_LEFT:
-                    teclas[ESQUERDA] = true;
-                    break;
-                }
+                fim = true;
             }
-
-            if (ev.type == ALLEGRO_EVENT_KEY_UP)
-            {
-                switch (ev.keyboard.keycode)
-                {
-                case ALLEGRO_KEY_UP:
-                    teclas[CIMA] = false;
-                    break;
-                case ALLEGRO_KEY_DOWN:
-                    teclas[BAIXO] = false;
-                    break;
-                case ALLEGRO_KEY_RIGHT:
-                    teclas[DIREITA] = false;
-                    break;
-                case ALLEGRO_KEY_LEFT:
-                    teclas[ESQUERDA] = false;
-                    break;
-                }
-
-            }
-
             else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
             {
                 fim = true;
             }
-
             else if (ev.type == ALLEGRO_EVENT_TIMER)
             {
                 if (sticker.y > altura_t2 - 147)
@@ -536,6 +545,8 @@ int main()
                 }
             }
 
+            fase01(ev);
+
             // DESENHO
     //____________________________________________________________________
             for (int i = 0; i < numF; i++)
@@ -581,7 +592,6 @@ int main()
     {
         al_destroy_bitmap(vidas[i]);
     }
-    al_destroy_bitmap(saladeaula);
     al_destroy_bitmap(borracha);
     al_destroy_sample(somdefundo);
     al_destroy_sample(somcorrendo);
