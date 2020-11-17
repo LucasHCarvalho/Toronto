@@ -12,16 +12,23 @@
 #include <time.h>
 #include <stdlib.h>
 
-bool teclas[] = { false, false, false, false };
-enum TECLAS {CIMA, BAIXO, DIREITA, ESQUERDA};
-
+enum TECLAS { CIMA, BAIXO, DIREITA, ESQUERDA };
+//Proporções do menu
 const int altura_t = 653;
 const int largura_t = 1162;
 
+//Proporções da tela do jogo
 const int altura_t2 = 800;
 const int largura_t2 = 1010;
 
 const int numF = 20;
+
+bool* fim = false;
+bool* fimmenu = false;
+bool* fiminstrucao = false;
+bool teclas[] = { false, false, false, false };
+bool pulo = false;
+bool gameOver = false;
 
 typedef struct Personagem
 {
@@ -63,7 +70,7 @@ typedef struct Pontuacao
 
 }Pontuacao;
 
-void iniciarPersonagem(Personagem *sticker)
+void iniciarPersonagem(Personagem* sticker)
 {
     sticker->h = 96;
     sticker->w = 42;
@@ -76,7 +83,7 @@ void iniciarPersonagem(Personagem *sticker)
 
 }
 
-void iniciarPontuacao(Pontuacao *a)
+void iniciarPontuacao(Pontuacao* a)
 {
     a->live = false;
     a->w = 20;
@@ -84,7 +91,7 @@ void iniciarPontuacao(Pontuacao *a)
 
 }
 
-void chamarPontuacao(Pontuacao *a)
+void chamarPontuacao(Pontuacao* a)
 {
     if (!a->live)
     {
@@ -97,7 +104,7 @@ void chamarPontuacao(Pontuacao *a)
     }
 }
 
-void atualizarPontuacao(Pontuacao *a)
+void atualizarPontuacao(Pontuacao* a)
 {
     if (a->live)
     {
@@ -108,13 +115,13 @@ void atualizarPontuacao(Pontuacao *a)
     }
 }
 
-void colisaoPontuacao(Pontuacao *a, Personagem* sticker)
+void colisaoPontuacao(Pontuacao* a, Personagem* sticker)
 {
     if (a->live)
     {
-        if (a->x - (a->w/2) < sticker->x + (sticker->w/2) &&
-            a->x + (a->w/2) > sticker->x &&
-            a->y - a->h < sticker->y + (sticker->h/2) &&
+        if (a->x - (a->w / 2) < sticker->x + (sticker->w / 2) &&
+            a->x + (a->w / 2) > sticker->x &&
+            a->y - a->h < sticker->y + (sticker->h / 2) &&
             a->y + a->h > sticker->y)
         {
             sticker->score++;
@@ -158,15 +165,15 @@ void atualizarProjeteis(Projeteis f[], int tamanho)
         }
 }
 
-void colisaoProjeteis(Projeteis f[], Personagem *sticker, int tamanho)
+void colisaoProjeteis(Projeteis f[], Personagem* sticker, int tamanho)
 {
     for (int i = 0; i < tamanho; i++)
     {
         if (f[i].live)
         {
-            if (f[i].x - (f[i].w/2) < sticker->x + (sticker->w/2) &&
-                f[i].x + (f[i].w/2) > sticker->x &&
-                f[i].y - f[i].h < sticker->y + (sticker->h/2) &&
+            if (f[i].x - (f[i].w / 2) < sticker->x + (sticker->w / 2) &&
+                f[i].x + (f[i].w / 2) > sticker->x &&
+                f[i].y - f[i].h < sticker->y + (sticker->h / 2) &&
                 f[i].y + f[i].h > sticker->y)
             {
                 sticker->vidas--;
@@ -178,14 +185,14 @@ void colisaoProjeteis(Projeteis f[], Personagem *sticker, int tamanho)
     }
 }
 
-void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menuinstrucao, ALLEGRO_BITMAP* instrucao, ALLEGRO_BITMAP* instrucao2, ALLEGRO_BITMAP *menusair, ALLEGRO_BITMAP *menuavancar, ALLEGRO_DISPLAY *display,
-    ALLEGRO_DISPLAY *display2, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_EVENT ev, bool *fim, bool *fimmenu, bool *fiminstrucao)
+void criarMenu(ALLEGRO_BITMAP* menu, ALLEGRO_BITMAP* menuinstrucao, ALLEGRO_BITMAP* instrucao, ALLEGRO_BITMAP* instrucao2, ALLEGRO_BITMAP* menusair, ALLEGRO_BITMAP* menuavancar, ALLEGRO_DISPLAY* display,
+    ALLEGRO_DISPLAY* display2, ALLEGRO_EVENT_QUEUE* fila_eventos, ALLEGRO_EVENT ev, bool* fim, bool* fimmenu, bool* fiminstrucao)
 {
 
     al_draw_bitmap(menu, 0, 0, 0);
 
     // fecha o programa quando a tecla ESC for acionada
-    if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE) 
+    if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
     {
         *fim = true;
     }
@@ -239,7 +246,7 @@ void criarMenu(ALLEGRO_BITMAP *menu, ALLEGRO_BITMAP *menuinstrucao, ALLEGRO_BITM
     }
 }
 
-void gameover(ALLEGRO_BITMAP* vidas[], Personagem* sticker, bool *gameOver)
+void gameover(ALLEGRO_BITMAP* vidas[], Personagem* sticker, bool* gameOver)
 {
     for (int i = 4; i > 0; i--)
     {
@@ -260,67 +267,58 @@ void gameover(ALLEGRO_BITMAP* vidas[], Personagem* sticker, bool *gameOver)
     }
 }
 
-void movimentacao(ALLEGRO_EVENT ev)
+void fase_um(ALLEGRO_BITMAP* tabela_inc, ALLEGRO_FONT* font, Projeteis* f, Pontuacao* a, Personagem* sticker, ALLEGRO_BITMAP* vidas[], bool* fim, bool* gameOver,
+    ALLEGRO_EVENT_QUEUE* fila_eventos, ALLEGRO_EVENT ev)
 {
-    if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
+
+    al_draw_bitmap(tabela_inc, 0, 0, 0);
+
+    if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
     {
-        switch (ev.keyboard.keycode)
-        {
-        case ALLEGRO_KEY_UP:
-            teclas[CIMA] = true;
-            break;
-        case ALLEGRO_KEY_DOWN:
-            teclas[BAIXO] = true;
-            break;
-        case ALLEGRO_KEY_RIGHT:
-            teclas[DIREITA] = true;
-            break;
-        case ALLEGRO_KEY_LEFT:
-            teclas[ESQUERDA] = true;
-            break;
-        }
+        *fim = true;
     }
 
-    if (ev.type == ALLEGRO_EVENT_KEY_UP)
+    else
     {
-        switch (ev.keyboard.keycode)
+        //al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "1. Qual o elemento da familia 1, linha 4?");
+
+        if (!gameOver)
         {
-        case ALLEGRO_KEY_UP:
-            teclas[CIMA] = false;
-            break;
-        case ALLEGRO_KEY_DOWN:
-            teclas[BAIXO] = false;
-            break;
-        case ALLEGRO_KEY_RIGHT:
-            teclas[DIREITA] = false;
-            break;
-        case ALLEGRO_KEY_LEFT:
-            teclas[ESQUERDA] = false;
-            break;
+            chamarProjeteis(f, numF);
+            atualizarProjeteis(f, numF);
+            colisaoProjeteis(f, &sticker, numF);
+            chamarPontuacao(&a);
+            atualizarPontuacao(&a);
+            colisaoPontuacao(&a, &sticker);
+
+            al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "Pontuacao = %d", sticker->score);
+
+            gameover(vidas, &sticker, &gameOver);
         }
-
+        else
+        {
+            fim = true;
+        }
     }
-
 }
 
-void fase01(ALLEGRO_EVENT ev)
-{
-    ALLEGRO_BITMAP* saladeaula;
-
-    saladeaula = al_load_bitmap("images/saladeaula.bmp");
-    al_convert_mask_to_alpha(saladeaula, al_map_rgb(255, 0, 255));
-
-    al_draw_bitmap(saladeaula, 0, 0, 0);
 
 
-}
+
 
 int main()
-{   
+{
+
     // Variáveis do jogo
-//___________________________________________________________________
-    Personagem sticker;    
+    //___________________________________________________________________
+    Personagem sticker;
+
+    //siglas dos elementos químicos
+    //___________________________________________________________________
     Projeteis f[20];
+
+    //perguntas
+    //___________________________________________________________________
     Pontuacao a;
 
     int FPS = 60;
@@ -332,18 +330,19 @@ int main()
     int coluna_folha = 4;
     int pulos = 1;
     float velpulo = -17;
-    
+
     const gravidade = 1;
 
-    bool *fim = false;
-    bool *fimmenu = false;
-    bool *fiminstrucao = false;
+    bool* fim = false;
+    bool* fimmenu = false;
+    bool* fiminstrucao = false;
+    bool teclas[] = { false, false, false, false };
     bool pulo = false;
     bool gameOver = false;
 
     // Inicialização da Allegro e do Display
-//____________________________________________________________________
-    ALLEGRO_DISPLAY *display = NULL;
+    //____________________________________________________________________
+    ALLEGRO_DISPLAY* display = NULL;
     ALLEGRO_DISPLAY* display2 = NULL;
     ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
     ALLEGRO_TIMER* timer = NULL;
@@ -358,6 +357,8 @@ int main()
     ALLEGRO_BITMAP* menuinstrucao = NULL;
     ALLEGRO_FONT* font = NULL;
     ALLEGRO_BITMAP* vidas[4];
+    ALLEGRO_BITMAP* tabela_inc;
+    //ALLEGRO_BITMAP* tabela_periodica;
     ALLEGRO_BITMAP* instrucao;
     ALLEGRO_BITMAP* instrucao2;
 
@@ -375,8 +376,8 @@ int main()
     {
         al_show_native_message_box(NULL, "AVISO!", NULL, "FALHAO AO CRIAR O DISPLAY", NULL, NULL);
         return -1;
-    }    
-    
+    }
+
     // Inicialização de Addons
 //____________________________________________________________________
     al_init_image_addon();
@@ -384,14 +385,14 @@ int main()
     al_init_ttf_addon();
     al_install_keyboard();
     al_install_mouse();
-    al_init_primitives_addon(); 
+    al_init_primitives_addon();
     al_install_audio();
     al_init_acodec_addon();
     al_reserve_samples(5);
 
     font = al_load_font("arial.ttf", 18, 0);
     timer = al_create_timer(2.0 / FPS);
-    
+
     srand(time(0));
 
     iniciarPersonagem(&sticker);
@@ -404,6 +405,7 @@ int main()
     //imagem = al_load_bitmap("sticker.bmp");
     imagemFull = al_load_bitmap("images/stickerfull.bmp");
     al_convert_mask_to_alpha(imagemFull, al_map_rgb(255, 0, 255));
+    tabela_inc = al_load_bitmap("images/tabela_periodica_sem_elem.bmp");
     borracha = al_load_bitmap("images/borracha.bmp");
     al_convert_mask_to_alpha(borracha, al_map_rgb(255, 0, 255));
     menu = al_load_bitmap("images/stickeredia_menu.bmp");
@@ -414,8 +416,9 @@ int main()
     somcorrendo = al_load_sample("Punch_04.wav");
     instrucao = al_load_bitmap("images/instrucoes_stick.bmp");
     instrucao2 = al_load_bitmap("images/instrucoes_stick2.bmp");
+    
 
-    sticker.image = al_load_bitmap("images/stickerfull.bmp"); 
+    sticker.image = al_load_bitmap("images/stickerfull.bmp");
     vidas[3] = al_load_bitmap("images/barravida4.bmp");
     al_convert_mask_to_alpha(vidas[3], al_map_rgb(255, 0, 255));
     vidas[2] = al_load_bitmap("images/barravida3.bmp");
@@ -433,11 +436,13 @@ int main()
 
     a.image = al_load_bitmap("images/A.bmp");
     al_convert_mask_to_alpha(a.image, al_map_rgb(255, 0, 255));
+    tabela_inc = al_load_bitmap("images/tabela_periodica_sem_elem.bmp");
+    al_convert_mask_to_alpha(tabela_inc, al_map_rgb(255, 0, 255));
 
     // Registro de sources
 //____________________________________________________________________
     al_register_event_source(fila_eventos, al_get_keyboard_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(display));    
+    al_register_event_source(fila_eventos, al_get_display_event_source(display));
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
 
@@ -448,7 +453,7 @@ int main()
     al_start_timer(timer);
 
     al_play_sample(somdefundo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
-    
+
 
     while (!fim)
     {
@@ -456,20 +461,67 @@ int main()
 
         al_wait_for_event(fila_eventos, &ev);
 
-        if (!fimmenu)
+        if (fimmenu == false)
         {
             criarMenu(menu, menuinstrucao, instrucao, instrucao2, menusair, menuavancar, display, display2, fila_eventos, ev, &fim, &fimmenu, &fiminstrucao);
         }
+
         else
         {
-            if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+            //al_draw_bitmap(tabela_inc, 0, 0, 0);
+
+            fase_um(tabela_inc, font, f, &a, &sticker, vidas, &fim, &gameOver, &fila_eventos, ev);
+
+
+
+            if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
             {
-                fim = true;
+                if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+                {
+                    fim = true;
+                }
+                switch (ev.keyboard.keycode)
+                {
+                case ALLEGRO_KEY_UP:
+                    teclas[CIMA] = true;
+                    break;
+                case ALLEGRO_KEY_DOWN:
+                    teclas[BAIXO] = true;
+                    break;
+                case ALLEGRO_KEY_RIGHT:
+                    teclas[DIREITA] = true;
+                    break;
+                case ALLEGRO_KEY_LEFT:
+                    teclas[ESQUERDA] = true;
+                    break;
+                }
             }
+
+            if (ev.type == ALLEGRO_EVENT_KEY_UP)
+            {
+                switch (ev.keyboard.keycode)
+                {
+                case ALLEGRO_KEY_UP:
+                    teclas[CIMA] = false;
+                    break;
+                case ALLEGRO_KEY_DOWN:
+                    teclas[BAIXO] = false;
+                    break;
+                case ALLEGRO_KEY_RIGHT:
+                    teclas[DIREITA] = false;
+                    break;
+                case ALLEGRO_KEY_LEFT:
+                    teclas[ESQUERDA] = false;
+                    break;
+                }
+
+            }
+
             else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
             {
                 fim = true;
             }
+
             else if (ev.type == ALLEGRO_EVENT_TIMER)
             {
                 if (sticker.y > altura_t2 - 147)
@@ -507,7 +559,7 @@ int main()
                         coluna_atual = 0;
                     }
                     sticker.vel_x = -1;
-                }        
+                }
                 if (teclas[CIMA] && pulo)
                 {
                     sticker.vel_y = velpulo;
@@ -533,69 +585,70 @@ int main()
                     colisaoProjeteis(f, &sticker, numF);
                     chamarPontuacao(&a);
                     atualizarPontuacao(&a);
-                    colisaoPontuacao(&a, &sticker);                    
+                    colisaoPontuacao(&a, &sticker);
 
                     al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "Pontuacao = %d", sticker.score);
 
                     gameover(vidas, &sticker, &gameOver);
+
                 }
                 else
                 {
-                    fim = true;                   
+                    fim = true;
                 }
             }
 
-            fase01(ev);
-
             // DESENHO
     //____________________________________________________________________
-            for (int i = 0; i < numF; i++)
-            {
-                al_draw_bitmap(f[i].image, f[i].x, f[i].y, 0);
+                for (int i = 0; i < numF; i++)
+                {
+                    al_draw_bitmap(f[i].image, f[i].x, f[i].y, 0);
+                }
+
+                al_draw_bitmap(a.image, a.x, a.y, 0);
+
+                if (sticker.vel_x > 0)
+                {
+                    al_draw_bitmap_region(imagemFull, regiao_x_folha + (coluna_atual * sticker.w), regiao_y_folha, sticker.w, sticker.h, sticker.x, sticker.y, 0);
+                }
+                else
+                {
+                    al_draw_scaled_bitmap(imagemFull, regiao_x_folha + (coluna_atual * sticker.w), regiao_y_folha, sticker.w, sticker.h, sticker.x + sticker.w, sticker.y, -sticker.w, sticker.h, 0);
+                }
+
+                al_draw_bitmap(borracha, -1, 752, 0);
+
+                for (int i = 101; i < 1000; i += 100)
+                {
+                    al_draw_bitmap(borracha, i, 752, 0);
+                }
+
+                al_draw_bitmap(borracha, 1010, 752, 0);
+
             }
 
-            al_draw_bitmap(a.image, a.x, a.y, 0);
-
-            if (sticker.vel_x > 0)
-            {
-                al_draw_bitmap_region(imagemFull, regiao_x_folha + (coluna_atual * sticker.w), regiao_y_folha, sticker.w, sticker.h, sticker.x, sticker.y, 0);
-            }
-            else
-            {
-                al_draw_scaled_bitmap(imagemFull, regiao_x_folha + (coluna_atual * sticker.w), regiao_y_folha, sticker.w, sticker.h, sticker.x + sticker.w, sticker.y, -sticker.w, sticker.h, 0);
-            }
-
-            al_draw_bitmap(borracha, -1, 752, 0);
-
-            for (int i = 101; i < 1000; i += 100)
-            {
-                al_draw_bitmap(borracha, i, 752, 0);
-            }       
-
-            al_draw_bitmap(borracha, 1010, 752, 0);
-
+            al_flip_display();
+            al_clear_to_color(al_map_rgb(255, 255, 255));
         }
 
-        al_flip_display();
-        al_clear_to_color(al_map_rgb(255, 255, 255));
-    }
 
-     
-    // Finalização do programa
-//____________________________________________________________________
-    al_destroy_display(display2);
-    al_destroy_event_queue(fila_eventos);
-    al_destroy_bitmap(sticker.image);
-    al_destroy_bitmap(f->image);
-    al_destroy_bitmap(a.image);
-    for (int i = 0; i < 4; i++)
-    {
-        al_destroy_bitmap(vidas[i]);
-    }
-    al_destroy_bitmap(borracha);
-    al_destroy_sample(somdefundo);
-    al_destroy_sample(somcorrendo);
-    al_destroy_font(font);
-
+        // Finalização do programa
+    //____________________________________________________________________
+        al_destroy_display(display2);
+        al_destroy_event_queue(fila_eventos);
+        al_destroy_bitmap(sticker.image);
+        al_destroy_bitmap(f->image);
+        al_destroy_bitmap(a.image);
+        for (int i = 0; i < 4; i++)
+        {
+            al_destroy_bitmap(vidas[i]);
+        }
+        al_destroy_bitmap(tabela_inc);
+        al_destroy_bitmap(borracha);
+        al_destroy_sample(somdefundo);
+        al_destroy_sample(somcorrendo);
+        al_destroy_font(font);
+   
     return 0;
 }
+
