@@ -278,28 +278,21 @@ void fase_um(ALLEGRO_BITMAP* tabela_inc, ALLEGRO_FONT* font, Projeteis* f, Pontu
         *fim = true;
     }
 
-    else
-    {
         //al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "1. Qual o elemento da familia 1, linha 4?");
+    if (*gameOver == false)
+    {
+        chamarProjeteis(f, numF);
+        atualizarProjeteis(f, numF);
+        colisaoProjeteis(f, sticker, numF);
+        chamarPontuacao(a);
+        atualizarPontuacao(a);
+        colisaoPontuacao(a, sticker);
 
-        if (!gameOver)
-        {
-            chamarProjeteis(f, numF);
-            atualizarProjeteis(f, numF);
-            colisaoProjeteis(f, &sticker, numF);
-            chamarPontuacao(&a);
-            atualizarPontuacao(&a);
-            colisaoPontuacao(&a, &sticker);
+        al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "Pontuacao = %d", sticker->score);
 
-            al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "Pontuacao = %d", sticker->score);
-
-            gameover(vidas, &sticker, &gameOver);
-        }
-        else
-        {
-            fim = true;
-        }
-    }
+        gameover(vidas, sticker, gameOver);
+    }  
+   
 }
 
 
@@ -578,21 +571,7 @@ int main()
 
                 sticker.y += sticker.vel_y;
 
-                if (!gameOver)
-                {
-                    chamarProjeteis(f, numF);
-                    atualizarProjeteis(f, numF);
-                    colisaoProjeteis(f, &sticker, numF);
-                    chamarPontuacao(&a);
-                    atualizarPontuacao(&a);
-                    colisaoPontuacao(&a, &sticker);
-
-                    al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "Pontuacao = %d", sticker.score);
-
-                    gameover(vidas, &sticker, &gameOver);
-
-                }
-                else
+                if (gameOver == true)
                 {
                     fim = true;
                 }

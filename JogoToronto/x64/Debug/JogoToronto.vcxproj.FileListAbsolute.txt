@@ -14,3 +14,5 @@ C:\Users\Bruno Santana\Desktop\toronto3\Toronto\JogoToronto\x64\Debug\JogoToront
 C:\Users\Bruno Santana\Desktop\toronto3\Toronto\JogoToronto\x64\Debug\JogoToronto.pdb
 C:\repositorio\JogoToronto\x64\Debug\JogoToronto.exe
 C:\repositorio\JogoToronto\x64\Debug\JogoToronto.pdb
+C:\repositorio\Toronto\JogoToronto\x64\Debug\JogoToronto.exe
+C:\repositorio\Toronto\JogoToronto\x64\Debug\JogoToronto.pdb
