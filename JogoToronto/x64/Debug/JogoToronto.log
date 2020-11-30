@@ -1,20 +1,16 @@
 ﻿  file.c
-C:\repositorio\Toronto\JogoToronto\file.c(2,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
-C:\repositorio\Toronto\JogoToronto\file.c(362,98): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
-C:\repositorio\Toronto\JogoToronto\file.c(362,94): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
-C:\repositorio\Toronto\JogoToronto\file.c(370,97): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
-C:\repositorio\Toronto\JogoToronto\file.c(370,93): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
-C:\repositorio\Toronto\JogoToronto\file.c(459,131): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
-C:\repositorio\Toronto\JogoToronto\file.c(459,127): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 11
-C:\repositorio\Toronto\JogoToronto\file.c(459,141): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
-C:\repositorio\Toronto\JogoToronto\file.c(459,133): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 12
-C:\repositorio\Toronto\JogoToronto\file.c(459,156): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
-C:\repositorio\Toronto\JogoToronto\file.c(459,143): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 13
-C:\repositorio\Toronto\JogoToronto\file.c(466,67): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
-C:\repositorio\Toronto\JogoToronto\file.c(466,63): warning C4024: 'fase_um': tipos diferentes para parâmetro formal e real 7
-C:\repositorio\Toronto\JogoToronto\file.c(466,93): warning C4047: 'função': 'ALLEGRO_EVENT_QUEUE *' difere em níveis de indireção de 'ALLEGRO_EVENT_QUEUE **'
-C:\repositorio\Toronto\JogoToronto\file.c(466,80): warning C4024: 'fase_um': tipos diferentes para parâmetro formal e real 9
-C:\repositorio\Toronto\JogoToronto\file.c(474,31): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
-C:\repositorio\Toronto\JogoToronto\file.c(515,27): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
-C:\repositorio\Toronto\JogoToronto\file.c(576,31): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
-  JogoToronto.vcxproj -> C:\repositorio\Toronto\JogoToronto\x64\Debug\JogoToronto.exe
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(2,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(306,98): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(306,94): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(314,97): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(314,93): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(405,131): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(405,127): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 11
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(405,141): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(405,133): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 12
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(405,156): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(405,143): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 13
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(417,31): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(477,31): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
+C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(518,27): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
+  JogoToronto.vcxproj -> C:\Users\Vand\Desktop\Toronto\JogoToronto\x64\Debug\JogoToronto.exe

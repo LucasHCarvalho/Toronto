@@ -22,6 +22,8 @@ const int altura_t2 = 800;
 const int largura_t2 = 1010;
 
 const int numF = 20;
+int velocidadeF = 5; 
+bool redraw = true;
 
 bool* fim = false;
 bool* fimmenu = false;
@@ -88,7 +90,6 @@ void iniciarPontuacao(Pontuacao* a)
     a->live = false;
     a->w = 20;
     a->h = 30;
-
 }
 
 void chamarPontuacao(Pontuacao* a)
@@ -97,25 +98,14 @@ void chamarPontuacao(Pontuacao* a)
     {
         if (rand() % 10 == 0)
         {
-            a->live = true;
             a->y = (rand() % 150) + 550;
             a->x = rand() % (largura_t2 - 30);
+            a->live = true;
         }
     }
 }
 
-void atualizarPontuacao(Pontuacao* a)
-{
-    if (a->live)
-    {
-        if (a->y > altura_t2 || a->y < 0 || a->x > largura_t2 || a->x < 0)
-        {
-            a->live = false;
-        }
-    }
-}
-
-void colisaoPontuacao(Pontuacao* a, Personagem* sticker)
+void colisaoPontuacao(Pontuacao* a, Personagem* sticker, ALLEGRO_SAMPLE* sompontuacao)
 {
     if (a->live)
     {
@@ -124,9 +114,19 @@ void colisaoPontuacao(Pontuacao* a, Personagem* sticker)
             a->y - a->h < sticker->y + (sticker->h / 2) &&
             a->y + a->h > sticker->y)
         {
-            sticker->score++;
             a->live = false;
+            sticker->score++;
+            al_play_sample(sompontuacao, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+            redraw = true;
         }
+    }
+}
+
+void velocidadeProjeteis(Projeteis f[], int tamanho)
+{
+    for (int i = 0; i < tamanho; i++)
+    {
+        f[i].speed = rand() % 3 + (1 + velocidadeF);
     }
 }
 
@@ -135,7 +135,6 @@ void iniciarProjeteis(Projeteis f[], int tamanho)
     for (int i = 0; i < tamanho; i++)
     {
         f[i].live = false;
-        f[i].speed = rand() % 10 + 1;
         f[i].w = 30;
         f[i].h = 20;
     }
@@ -165,7 +164,7 @@ void atualizarProjeteis(Projeteis f[], int tamanho)
         }
 }
 
-void colisaoProjeteis(Projeteis f[], Personagem* sticker, int tamanho)
+void colisaoProjeteis(Projeteis f[], Personagem* sticker, int tamanho, ALLEGRO_SAMPLE* somdano)
 {
     for (int i = 0; i < tamanho; i++)
     {
@@ -178,6 +177,7 @@ void colisaoProjeteis(Projeteis f[], Personagem* sticker, int tamanho)
             {
                 sticker->vidas--;
                 f[i].live = false;
+                al_play_sample(somdano, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
             }
             else if (f[i].y > altura_t2)
                 f[i].live = false;
@@ -188,9 +188,8 @@ void colisaoProjeteis(Projeteis f[], Personagem* sticker, int tamanho)
 void criarMenu(ALLEGRO_BITMAP* menu, ALLEGRO_BITMAP* menuinstrucao, ALLEGRO_BITMAP* instrucao, ALLEGRO_BITMAP* instrucao2, ALLEGRO_BITMAP* menusair, ALLEGRO_BITMAP* menuavancar, ALLEGRO_DISPLAY* display,
     ALLEGRO_DISPLAY* display2, ALLEGRO_EVENT_QUEUE* fila_eventos, ALLEGRO_EVENT ev, bool* fim, bool* fimmenu, bool* fiminstrucao)
 {
-
     al_draw_bitmap(menu, 0, 0, 0);
-
+    
     // fecha o programa quando a tecla ESC for acionada
     if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
     {
@@ -202,7 +201,6 @@ void criarMenu(ALLEGRO_BITMAP* menu, ALLEGRO_BITMAP* menuinstrucao, ALLEGRO_BITM
         // detecta posicao do mouse nos logos do menu para iniciar e destroir o menu ou encerrar o programa
         if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 294 && ev.mouse.y < 355)
         {
-            al_draw_bitmap(menuavancar, 0, 0, 0);
             if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
             {
                 al_clear_to_color(al_map_rgb(255, 255, 255));
@@ -214,7 +212,6 @@ void criarMenu(ALLEGRO_BITMAP* menu, ALLEGRO_BITMAP* menuinstrucao, ALLEGRO_BITM
         }
         else if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 407 && ev.mouse.y < 467)
         {
-            al_draw_bitmap(menuinstrucao, 0, 0, 0);
             if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
             {
                 *fiminstrucao = true;
@@ -222,7 +219,6 @@ void criarMenu(ALLEGRO_BITMAP* menu, ALLEGRO_BITMAP* menuinstrucao, ALLEGRO_BITM
         }
         else if (ev.mouse.x > 15 && ev.mouse.x < 253 && ev.mouse.y > 520 && ev.mouse.y < 576)
         {
-            al_draw_bitmap(menusair, 0, 0, 0);
             if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
                 *fim = true;
         }
@@ -233,7 +229,6 @@ void criarMenu(ALLEGRO_BITMAP* menu, ALLEGRO_BITMAP* menuinstrucao, ALLEGRO_BITM
         al_draw_bitmap(instrucao, 0, 0, 0);
         if (ev.mouse.x > 407 && ev.mouse.x < 612 && ev.mouse.y > 583 && ev.mouse.y < 632)
         {
-            al_draw_bitmap(instrucao2, 0, 0, 0);
             if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
             {
                 al_clear_to_color(al_map_rgb(255, 255, 255));
@@ -244,60 +239,8 @@ void criarMenu(ALLEGRO_BITMAP* menu, ALLEGRO_BITMAP* menuinstrucao, ALLEGRO_BITM
             }
         }
     }
+
 }
-
-void gameover(ALLEGRO_BITMAP* vidas[], Personagem* sticker, bool* gameOver)
-{
-    for (int i = 4; i > 0; i--)
-    {
-        if (sticker->vidas == i)
-        {
-            al_draw_bitmap(vidas[--i], 0, 50, 0);
-        }
-    }
-
-    if (sticker->vidas == 0)
-    {
-        *gameOver = true;
-    }
-
-    if (sticker->score >= 15)
-    {
-        *gameOver = true;
-    }
-}
-
-void fase_um(ALLEGRO_BITMAP* tabela_inc, ALLEGRO_FONT* font, Projeteis* f, Pontuacao* a, Personagem* sticker, ALLEGRO_BITMAP* vidas[], bool* fim, bool* gameOver,
-    ALLEGRO_EVENT_QUEUE* fila_eventos, ALLEGRO_EVENT ev)
-{
-
-    al_draw_bitmap(tabela_inc, 0, 0, 0);
-
-    if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-    {
-        *fim = true;
-    }
-
-        //al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "1. Qual o elemento da familia 1, linha 4?");
-    if (*gameOver == false)
-    {
-        chamarProjeteis(f, numF);
-        atualizarProjeteis(f, numF);
-        colisaoProjeteis(f, sticker, numF);
-        chamarPontuacao(a);
-        atualizarPontuacao(a);
-        colisaoPontuacao(a, sticker);
-
-        al_draw_textf(font, al_map_rgb(0, 0, 0), 70, 100, ALLEGRO_ALIGN_CENTER, "Pontuacao = %d", sticker->score);
-
-        gameover(vidas, sticker, gameOver);
-    }  
-   
-}
-
-
-
-
 
 int main()
 {
@@ -324,14 +267,12 @@ int main()
     int pulos = 1;
     float velpulo = -17;
 
-    const gravidade = 1;
-
-    bool* fim = false;
-    bool* fimmenu = false;
-    bool* fiminstrucao = false;
-    bool teclas[] = { false, false, false, false };
-    bool pulo = false;
-    bool gameOver = false;
+    bool fimfase1 = false;
+    bool fimfase2 = false;
+    bool fimfase3 = false;
+    bool fimfase4 = false;
+    bool ganhou = false; 
+   
 
     // Inicialização da Allegro e do Display
     //____________________________________________________________________
@@ -342,8 +283,8 @@ int main()
     ALLEGRO_BITMAP* imagem = NULL;
     ALLEGRO_BITMAP* imagemFull = NULL;
     ALLEGRO_BITMAP* borracha = NULL;
-    ALLEGRO_SAMPLE* somdefundo = NULL;
-    ALLEGRO_SAMPLE* somcorrendo = NULL;
+    ALLEGRO_SAMPLE* somdano = NULL;
+    ALLEGRO_SAMPLE* somfundo = NULL;
     ALLEGRO_BITMAP* menu = NULL;
     ALLEGRO_BITMAP* menuavancar = NULL;
     ALLEGRO_BITMAP* menusair = NULL;
@@ -351,9 +292,12 @@ int main()
     ALLEGRO_FONT* font = NULL;
     ALLEGRO_BITMAP* vidas[4];
     ALLEGRO_BITMAP* tabela_inc;
-    //ALLEGRO_BITMAP* tabela_periodica;
     ALLEGRO_BITMAP* instrucao;
     ALLEGRO_BITMAP* instrucao2;
+    ALLEGRO_BITMAP* vitoria;
+    ALLEGRO_BITMAP* derrota;
+    ALLEGRO_SAMPLE* sompontuacao;
+    ALLEGRO_SAMPLE* somderrota;
 
     // Programa
 //____________________________________________________________________
@@ -383,8 +327,8 @@ int main()
     al_init_acodec_addon();
     al_reserve_samples(5);
 
-    font = al_load_font("arial.ttf", 18, 0);
-    timer = al_create_timer(2.0 / FPS);
+    font = al_load_font("arial.ttf", 22, 0);
+    timer = al_create_timer(1.0 / FPS);
 
     srand(time(0));
 
@@ -395,22 +339,20 @@ int main()
     // Criação da fila e demais dispositivos
 //____________________________________________________________________
     fila_eventos = al_create_event_queue();
-    //imagem = al_load_bitmap("sticker.bmp");
     imagemFull = al_load_bitmap("images/stickerfull.bmp");
     al_convert_mask_to_alpha(imagemFull, al_map_rgb(255, 0, 255));
-    tabela_inc = al_load_bitmap("images/tabela_periodica_sem_elem.bmp");
     borracha = al_load_bitmap("images/borracha.bmp");
     al_convert_mask_to_alpha(borracha, al_map_rgb(255, 0, 255));
     menu = al_load_bitmap("images/stickeredia_menu.bmp");
     menuavancar = al_load_bitmap("images/stickeredia_jogar.bmp");
     menusair = al_load_bitmap("images/stickeredia_sair.bmp");
     menuinstrucao = al_load_bitmap("images/stickeredia_instrucoes.bmp");
-    somdefundo = al_load_sample("trilha_sonora.ogg");
-    somcorrendo = al_load_sample("Punch_04.wav");
-    instrucao = al_load_bitmap("images/instrucoes_stick.bmp");
-    instrucao2 = al_load_bitmap("images/instrucoes_stick2.bmp");
-    
-
+    somdano = al_load_sample("images/oof.mp3");
+    somderrota = al_load_sample("images/somderrota.mp3");
+    sompontuacao = al_load_sample("images/sompontuacao.mp3");
+    somfundo = al_load_sample("images/introclaro.mp3");
+    instrucao = al_load_bitmap("images/instrucoes1.bmp");
+    instrucao2 = al_load_bitmap("images/instrucoes2.bmp");    
     sticker.image = al_load_bitmap("images/stickerfull.bmp");
     vidas[3] = al_load_bitmap("images/barravida4.bmp");
     al_convert_mask_to_alpha(vidas[3], al_map_rgb(255, 0, 255));
@@ -420,17 +362,20 @@ int main()
     al_convert_mask_to_alpha(vidas[1], al_map_rgb(255, 0, 255));
     vidas[0] = al_load_bitmap("images/barravida1.bmp");
     al_convert_mask_to_alpha(vidas[0], al_map_rgb(255, 0, 255));
-
     for (int i = 0; i < numF; i++)
     {
-        f[i].image = al_load_bitmap("images/f.bmp");
+        f[i].image = al_load_bitmap("images/fluor.bmp");
         al_convert_mask_to_alpha(f[i].image, al_map_rgb(255, 0, 255));
     }
-
-    a.image = al_load_bitmap("images/A.bmp");
+    a.image = al_load_bitmap("images/Q.bmp");
     al_convert_mask_to_alpha(a.image, al_map_rgb(255, 0, 255));
-    tabela_inc = al_load_bitmap("images/tabela_periodica_sem_elem.bmp");
+    tabela_inc = al_load_bitmap("images/abenza.bmp");
     al_convert_mask_to_alpha(tabela_inc, al_map_rgb(255, 0, 255));
+    vitoria = al_load_bitmap("images/vitoria.bmp");
+    al_convert_mask_to_alpha(vitoria, al_map_rgb(255, 0, 255));
+    derrota = al_load_bitmap("images/derrota.bmp");
+    al_convert_mask_to_alpha(derrota, al_map_rgb(255, 0, 255));
+
 
     // Registro de sources
 //____________________________________________________________________
@@ -445,11 +390,12 @@ int main()
 //____________________________________________________________________
     al_start_timer(timer);
 
-    al_play_sample(somdefundo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
-
+    al_play_sample(somfundo, 0.05, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL);
 
     while (!fim)
     {
+        
+        velocidadeProjeteis(f, numF);
         ALLEGRO_EVENT ev;
 
         al_wait_for_event(fila_eventos, &ev);
@@ -460,12 +406,69 @@ int main()
         }
 
         else
-        {
-            //al_draw_bitmap(tabela_inc, 0, 0, 0);
+        {   
+            al_unregister_event_source(fila_eventos, al_get_mouse_event_source());         
+            al_draw_bitmap(tabela_inc, 0, 0, 0);
 
-            fase_um(tabela_inc, font, f, &a, &sticker, vidas, &fim, &gameOver, &fila_eventos, ev);
+            if (ev.type == ALLEGRO_EVENT_TIMER)
+            {
+                if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+                {
+                    fim = true;
+                }
 
+                if (gameOver == false)
+                {
+                    chamarProjeteis(f, numF);
+                    atualizarProjeteis(f, numF);
+                    colisaoProjeteis(f, &sticker, numF, somdano);
+                    chamarPontuacao(&a);
+                    colisaoPontuacao(&a, &sticker, sompontuacao);
 
+                    if (sticker.score == 5 && !fimfase1)
+                    {
+                        tabela_inc = al_load_bitmap("images/samuel.bmp");
+                        sticker.score = 0;
+                        velocidadeF += 1;
+                        fimfase1 = true;
+                        fimfase2 = false;
+                    }
+                    else if (sticker.score == 5 && !fimfase2)
+                    {  
+                        tabela_inc = al_load_bitmap("images/claro.bmp");
+                        sticker.score = 0;
+                        velocidadeF += 2;
+                        fimfase2 = true;
+                        fimfase3 = false;
+                    }
+                    else if (sticker.score == 5 && !fimfase3)
+                    {
+                        tabela_inc = al_load_bitmap("images/teaga.bmp");
+                        sticker.score = 0;
+                        velocidadeF += 2;
+                        fimfase3 = true;
+                        fimfase4 = false;
+                    }
+                    else if (sticker.score == 5 && !fimfase4)
+                    {
+                        tabela_inc = al_load_bitmap("images/konrad.bmp");
+                        sticker.score = 0;
+                        velocidadeF += 3;
+                        fimfase4 = true;     
+                    }
+
+                    if (sticker.score >= 6)
+                    {
+                        gameOver = true;
+                        ganhou = true;
+                    }
+
+                    if (sticker.vidas == 0)
+                    {
+                        gameOver = true;
+                    }
+                }
+            }
 
             if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
             {
@@ -517,6 +520,7 @@ int main()
 
             else if (ev.type == ALLEGRO_EVENT_TIMER)
             {
+
                 if (sticker.y > altura_t2 - 147)
                 {
                     pulo = true;
@@ -530,27 +534,30 @@ int main()
                 {
                     if (sticker.x <= largura_t2 - 50)
                     {
-                        sticker.x += teclas[DIREITA] * 10;
+                        sticker.x += teclas[DIREITA] * 5;
                     }
-
+                    
                     coluna_atual += 1;
                     if (coluna_atual >= coluna_folha)
                     {
                         coluna_atual = 0;
-                    }
+                    }                    
+                    else
+
                     sticker.vel_x = 1;
 
                 }
                 if (teclas[ESQUERDA])
                 {
                     if (sticker.x >= 0)
-                        sticker.x -= teclas[ESQUERDA] * 10;
+                        sticker.x -= teclas[ESQUERDA] * 5;
 
                     coluna_atual += 1;
                     if (coluna_atual >= coluna_folha)
                     {
                         coluna_atual = 0;
                     }
+
                     sticker.vel_x = -1;
                 }
                 if (teclas[CIMA] && pulo)
@@ -562,7 +569,7 @@ int main()
 
                 if (!pulo)
                 {
-                    sticker.vel_y += gravidade;
+                    sticker.vel_y += 1;
                 }
                 else
                 {
@@ -570,11 +577,7 @@ int main()
                 }
 
                 sticker.y += sticker.vel_y;
-
-                if (gameOver == true)
-                {
-                    fim = true;
-                }
+               
             }
 
             // DESENHO
@@ -584,7 +587,24 @@ int main()
                     al_draw_bitmap(f[i].image, f[i].x, f[i].y, 0);
                 }
 
-                al_draw_bitmap(a.image, a.x, a.y, 0);
+                if (sticker.vidas == 4)
+                {
+                    al_draw_bitmap(vidas[3], 0, 10, 0);
+
+                }
+                else if (sticker.vidas == 3)
+                {
+                    al_draw_bitmap(vidas[2], 0, 10, 0);
+                    
+                }
+                else if (sticker.vidas == 2)
+                {
+                    al_draw_bitmap(vidas[1], 0, 10, 0);
+                }
+                else 
+                {
+                    al_draw_bitmap(vidas[0], 0, 10, 0);
+                }
 
                 if (sticker.vel_x > 0)
                 {
@@ -602,15 +622,97 @@ int main()
                     al_draw_bitmap(borracha, i, 752, 0);
                 }
 
-                al_draw_bitmap(borracha, 1010, 752, 0);
+                if (redraw)
+                {     
+                    if (sticker.score == 1)
+                        a.image = al_load_bitmap("images/U.bmp");
+                    if (sticker.score == 2)
+                        a.image = al_load_bitmap("images/E.bmp");
+                    if (sticker.score == 3)
+                        a.image = al_load_bitmap("images/R.bmp");
+                    if (sticker.score == 4)
+                        a.image = al_load_bitmap("images/Y.bmp");
 
+                    if (fimfase1 == true)
+                    {
+                        if (sticker.score == 0)
+                            a.image = al_load_bitmap("images/Q.bmp");
+                        if (sticker.score == 1)
+                            a.image = al_load_bitmap("images/U.bmp");
+                        if (sticker.score == 2)
+                            a.image = al_load_bitmap("images/I.bmp");
+                        if (sticker.score == 3)
+                            a.image = al_load_bitmap("images/C.bmp");
+                        if (sticker.score == 4)
+                            a.image = al_load_bitmap("images/K.bmp");
+                    }
+                    if (fimfase2 == true)
+                    {
+                        if (sticker.score == 0)
+                            a.image = al_load_bitmap("images/O.bmp");
+                        if (sticker.score == 1)
+                            a.image = al_load_bitmap("images/R.bmp");
+                        if (sticker.score == 2)
+                            a.image = al_load_bitmap("images/D.bmp");
+                        if (sticker.score == 3)
+                            a.image = al_load_bitmap("images/E.bmp");
+                        if (sticker.score == 4)
+                            a.image = al_load_bitmap("images/R.bmp");
+                    }
+                    if (fimfase3 == true)
+                    {
+                        if (sticker.score == 0)
+                            a.image = al_load_bitmap("images/I.bmp");
+                        if (sticker.score == 1)
+                            a.image = al_load_bitmap("images/N.bmp");
+                        if (sticker.score == 2)
+                            a.image = al_load_bitmap("images/T.bmp");
+                        if (sticker.score == 3)
+                            a.image = al_load_bitmap("images/2.bmp");
+                        if (sticker.score == 4)
+                            a.image = al_load_bitmap("images/1.bmp");
+                    }
+                    if (fimfase4 == true)
+                    {
+                        if (sticker.score == 0)
+                            a.image = al_load_bitmap("images/L.bmp");
+                        if (sticker.score == 1)
+                            a.image = al_load_bitmap("images/I.bmp");
+                        if (sticker.score == 2)
+                            a.image = al_load_bitmap("images/M.bmp");
+                        if (sticker.score == 3)
+                            a.image = al_load_bitmap("images/I.bmp");
+                        if (sticker.score == 4)
+                            a.image = al_load_bitmap("images/T.bmp");
+                        if (sticker.score == 5)
+                            a.image = al_load_bitmap("images/E.bmp");
+                    }
+                    redraw = false;
+                }
+
+                al_draw_bitmap(a.image, a.x, a.y, 0);
+            }
+
+            if (gameOver == true)
+            {
+                if (ev.type == ALLEGRO_EVENT_TIMER)
+                {
+                    al_unregister_event_source(fila_eventos, al_get_keyboard_event_source());
+                    al_clear_to_color(al_map_rgb(255, 255, 255));   
+                    if (ganhou)
+                    {
+                        al_draw_bitmap(vitoria, 0, 0, 0);
+                    }
+                    else
+                    {
+                        al_draw_bitmap(derrota, 0, 0, 0);
+                    }
+                }
             }
 
             al_flip_display();
             al_clear_to_color(al_map_rgb(255, 255, 255));
         }
-
-
         // Finalização do programa
     //____________________________________________________________________
         al_destroy_display(display2);
@@ -622,12 +724,14 @@ int main()
         {
             al_destroy_bitmap(vidas[i]);
         }
-        al_destroy_bitmap(tabela_inc);
         al_destroy_bitmap(borracha);
-        al_destroy_sample(somdefundo);
-        al_destroy_sample(somcorrendo);
+        al_destroy_sample(somdano);
+        al_destroy_sample(sompontuacao);
+        al_destroy_sample(somfundo);
         al_destroy_font(font);
-   
+        al_destroy_bitmap(derrota);
+        al_destroy_bitmap(vitoria);
+
     return 0;
 }
 

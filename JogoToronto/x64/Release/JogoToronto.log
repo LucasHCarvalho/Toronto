@@ -1,0 +1,15 @@
+﻿file.obj : error LNK2001: símbolo externo não resolvido __imp_al_init_image_addon
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_init_ttf_addon
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_destroy_font
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_init_font_addon
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_install_audio
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_play_sample
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_draw_textf
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_init_primitives_addon
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_reserve_samples
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_show_native_message_box
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_destroy_sample
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_load_sample
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_init_acodec_addon
+file.obj : error LNK2001: símbolo externo não resolvido __imp_al_load_font
+C:\Users\Vand\Desktop\Toronto\JogoToronto\x64\Release\JogoToronto.exe : fatal error LNK1120: 14 externo não resolvidos

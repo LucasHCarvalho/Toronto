@@ -1,0 +1,19 @@
+﻿1>------ Recompilação total iniciada: Projeto: JogoToronto, Configuração: Debug x64 ------
+1>file.c
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(2,10): warning C4067: tokens inesperados após diretiva de pré-processador - esperado um newline
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(322,98): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(322,94): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(330,97): warning C4047: 'função': 'int' difere em níveis de indireção de 'void *'
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(330,93): warning C4024: 'al_show_native_message_box': tipos diferentes para parâmetro formal e real 6
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(425,131): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(425,127): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 11
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(425,141): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(425,133): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 12
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(425,156): warning C4047: 'função': 'bool *' difere em níveis de indireção de 'bool **'
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(425,143): warning C4024: 'criarMenu': tipos diferentes para parâmetro formal e real 13
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(437,31): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(496,31): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
+1>C:\Users\Vand\Desktop\Toronto\JogoToronto\file.c(537,27): warning C4047: '=': 'bool *' difere em níveis de indireção de 'int'
+1>JogoToronto.vcxproj -> C:\Users\Vand\Desktop\Toronto\JogoToronto\x64\Debug\JogoToronto.exe
+1>Projeto de compilação pronto "JogoToronto.vcxproj".
+========== Recompilar Tudo: 1 com êxito, 0 com falha, 0 ignorados ==========
